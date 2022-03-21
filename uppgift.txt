@@ -1,0 +1,51 @@
+tipspromenad 
+
+draw.io
+skissa lite modeller
+
+starta, fyll i namn, välj spelwalk, gå till position, läs info med nästa steg, 
+lite info i taget typ "nästa" för mer info om det finns, repetera, sen färdigt.
+
+openstreetmap för gps 
+
+kör efter grafisk profil
+
+
+förstasida, 
+-fyll i namn, ålder 
+-visa 5 närmaste walksen
+
+spelsidan där allt händer,
+- plinga till nära punkterna
+- ska dyka upp info, fråga, båda etc. kanske nån youtubevideo ibland
+------ 1 fråga, kan ha 3 svar. (gör senare) ----
+- summera slutet, resultat eller grattis
+
+om sida,
+lite info om appen typ
+
+footer meny, simpel typ start, se walks?
+
+stopp knapp typ i ovankant när man kör
+
+
+- guid som sparar userprogress etc till databas
+
+- använd telefonens gps
+
+- webbsida, blir senare en app
+
+- api som kommunicerar med backend/server
+
+- ingen inloggning
+
+- geowalk kan vi kalla det
+
+- skapa adminsida, ska kunna lägga in egen tipspromenad
+
+api: 
+get för att hämta kordinater, 
+hämta geowalks
+tryck nästa för att komma till nsästa fråga.
+post för att lägga in kordinater och frågor/info/svar
+gör olika posts för de olika sakerna
