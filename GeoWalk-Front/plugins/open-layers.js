@@ -29,8 +29,9 @@ export default (context, inject) => {
     }
   }
 
+  const showLabel = true
+  const labelTextStroke = 'rgba(255, 255, 255, 1)'
   let pointerOverFeature = null
-  const showLabel = 'false'
 
   const circleStyled = new CircleStyle({
     radius: 8,
@@ -61,6 +62,34 @@ export default (context, inject) => {
     }
 
     const map = new ol.Map(options)
+
+    map.on('pointermove', (evt) => {
+      const featureOver = map.forEachFeatureAtPixel(evt.pixel, (feature) => {
+        // feature.fillStyle = 'rgba(50,150,85,1)' // text fill färg
+        // console.log('asdas')
+        // console.log(feature)
+        // renderLabelText(ctx, x, y, labelFeature.get('showLabel'))
+        feature.set('showLabel', 'true')
+        // showLabel = true
+        // console.log(feature)
+        // renderLabelText(feature, toLonLat(feature.values_.geometry.flatCoordinates[0]), toLonLat(feature.values_.geometry.flatCoordinates[1]))
+        // // console.log(toLonLat(feature.values_.geometry.flatCoordinates))
+        return feature
+      })
+
+      // console.log(featureOver.values_.showLabel)
+
+      // console.log('showLabel ' + this.showLabel)
+
+      if (pointerOverFeature && pointerOverFeature !== featureOver) {
+        pointerOverFeature.set('showLabel', true)
+        console.log('featureover')
+        console.log(featureOver)
+        // console.log(pointerOverFeature.values_.showLabel)
+      }
+      pointerOverFeature = featureOver
+    })
+
     return {
       map,
       addPosition: (layerName, x, y) => {
@@ -99,20 +128,20 @@ export default (context, inject) => {
           geometry: new Circle(([lon, lat]), 0)
         })
         const renderLabelText = (ctx, lon, lat) => {
+          ctx.fillStyle = 'rgba(50,150,85,1)' // text fill färg
+          // ctx.strokeStyle = stroke
+          ctx.lineWidth = 1
+          ctx.textAlign = 'center'
+          ctx.textBaseline = 'middle'
+          ctx.font = 'bold 15px verdana'
+          // ctx.filter = 'drop-shadow(7px 7px 2px #e81)'
           if (showLabel === true) {
-            ctx.fillStyle = 'rgba(50,150,85,1)' // text fill färg
-            // ctx.strokeStyle = stroke
-            ctx.lineWidth = 1
-            ctx.textAlign = 'center'
-            ctx.textBaseline = 'middle'
-            ctx.font = 'bold 15px verdana'
-            // ctx.filter = 'drop-shadow(7px 7px 2px #e81)'
-
             ctx.fillText(layerName, lon, lat)
-            // ctx.strokeText(layerName, lon, lat)
-            // labelFeature.set('showLabel', showLabel)
+            ctx.strokeText(layerName, lon, lat)
+          // labelFeature.set('showLabel', showLabel)
           }
         }
+        labelFeature.set('label-color', labelTextStroke)
 
         labelFeature.setStyle(new Style({
           renderer (coordinates, state) {
@@ -137,10 +166,10 @@ export default (context, inject) => {
             gradient.addColorStop(0, 'rgba(80,50,50,0.2)')
             ctx.beginPath() // verkar sätta inre gräns för fill
             ctx.arc(x, y, radius * 50, 0, 2 * Math.PI, true)
-            ctx.fillStyle = gradient // sätter gradient färgen
-            ctx.fill() // fyller cirkeln, utan denna är det ingen fill
             ctx.strokeStyle = 'rgba(80,50,50,0.5)' // sätter stroke färg
             ctx.stroke() // ser till så stroke är aktiverad
+
+            renderLabelText(ctx, x, y, labelFeature.get('label-color', labelTextStroke))
           }
         })
         )
@@ -151,28 +180,6 @@ export default (context, inject) => {
           })
         })
         map.addLayer(labelLayer)
-        map.on('pointermove', (evt) => {
-          const featureOver = map.forEachFeatureAtPixel(evt.pixel, (feature) => {
-            // renderLabelText(ctx, x, y, labelFeature.get('showLabel'))
-            feature.set('showLabel', 'true')
-            this.showLabel = true
-            // console.log(feature)
-            renderLabelText(feature.values_.layerName, toLonLat(feature.values_.geometry.flatCoordinates[0]), toLonLat(feature.values_.geometry.flatCoordinates[1]))
-            // console.log(toLonLat(feature.values_.geometry.flatCoordinates))
-            return feature
-          })
-
-          // console.log(featureOver.values_.showLabel)
-
-          // console.log('showLabel ' + this.showLabel)
-
-          if (pointerOverFeature && pointerOverFeature === featureOver) {
-            pointerOverFeature.set('showLabel', true)
-            console.log('featureover')
-            // console.log(pointerOverFeature.values_.showLabel)
-          }
-          pointerOverFeature = featureOver
-        })
       }
     }
   }
