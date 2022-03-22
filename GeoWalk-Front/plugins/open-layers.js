@@ -29,7 +29,8 @@ export default (context, inject) => {
     }
   }
 
-  const showLabel = true
+  let hoveredFeatures = []
+  const allFeatures = []
   const labelTextStroke = 'rgba(255, 255, 255, 1)'
   let pointerOverFeature = null
 
@@ -48,55 +49,42 @@ export default (context, inject) => {
     })
   }
 
+  const styleFunction = function (feature) {
+    return styles[feature.getGeometry().getType()] // Checks what type of feature it is and sets the style accordingly
+  }
+
   ol.createMap = (options) => {
     options = {
       view: new ol.View({
-        center: options.centerView ?? ol.format.fromLonLat([14, 15]),
-        zoom: 4
+        center: options.centerView ?? ol.format.fromLonLat([16, 15]),
+        zoom: 6
       }),
       ...options
     }
+    const map = new ol.Map(options) // Creates the map with above options
 
-    const styleFunction = function (feature) {
-      return styles[feature.getGeometry().getType()]
-    }
-
-    const map = new ol.Map(options)
-
-    map.on('pointermove', (evt) => {
-      const featureOver = map.forEachFeatureAtPixel(evt.pixel, (feature) => {
-        // feature.fillStyle = 'rgba(50,150,85,1)' // text fill färg
-        // console.log('asdas')
-        // console.log(feature)
-        // renderLabelText(ctx, x, y, labelFeature.get('showLabel'))
+    // sets the label to show true when feature is hovered over. Adds features to an array with all features for that location
+    map.on('pointermove', (e) => {
+      hoveredFeatures = []
+      const featureOver = map.forEachFeatureAtPixel(e.pixel, (feature) => {
         feature.set('showLabel', 'true')
-        // showLabel = true
-        // console.log(feature)
-        // renderLabelText(feature, toLonLat(feature.values_.geometry.flatCoordinates[0]), toLonLat(feature.values_.geometry.flatCoordinates[1]))
-        // // console.log(toLonLat(feature.values_.geometry.flatCoordinates))
+        hoveredFeatures.push(`${feature.values_.layerName}_label`)
         return feature
       })
 
-      // console.log(featureOver.values_.showLabel)
-
-      // console.log('showLabel ' + this.showLabel)
-
       if (pointerOverFeature && pointerOverFeature !== featureOver) {
         pointerOverFeature.set('showLabel', true)
-        console.log('featureover')
-        console.log(featureOver)
-        // console.log(pointerOverFeature.values_.showLabel)
       }
       pointerOverFeature = featureOver
     })
-
     return {
       map,
-      addPosition: (layerName, x, y) => {
+      addLayer: (layerName, typeOfLayer, x, y) => {
         const feature = new ol.format.GeoJSON().readFeature(
           {
             type: 'Feature',
-            properties: { layerName },
+            properties: { layerName, typeOfLayer },
+            style: styleFunction,
             geometry: {
               type: 'MultiPoint',
               coordinates:
@@ -108,6 +96,8 @@ export default (context, inject) => {
         )
         const vectorLayer = new ol.layer.VectorLayer({
           name: layerName,
+          type: typeOfLayer,
+
           style: styleFunction,
           source: new ol.source.VectorSource({
             features: [feature]
@@ -115,6 +105,13 @@ export default (context, inject) => {
           })
         })
         map.addLayer(vectorLayer)
+        return (vectorLayer)
+      },
+      addPosition (layerName, title, content) {
+        const position = map.getLayers(layerName)
+        this.title = title
+        this.content = content
+        console.log(position)
       },
       removeLayerFromMap (layerName) {
         const layer = map.getLayers().getArray().find(x => x.get('name') === layerName)
@@ -131,17 +128,15 @@ export default (context, inject) => {
           ctx.fillStyle = 'rgba(50,150,85,1)' // text fill färg
           // ctx.strokeStyle = stroke
           ctx.lineWidth = 1
-          ctx.textAlign = 'center'
-          ctx.textBaseline = 'middle'
-          ctx.font = 'bold 15px verdana'
+          ctx.textAlign = 'start'
+          ctx.textBaseline = 'bottom'
+          ctx.font = 'bold 15px roboto'
           // ctx.filter = 'drop-shadow(7px 7px 2px #e81)'
-          if (showLabel === true) {
+          if (hoveredFeatures.includes(layerName)) {
             ctx.fillText(layerName, lon, lat)
-            ctx.strokeText(layerName, lon, lat)
-          // labelFeature.set('showLabel', showLabel)
+            // ctx.strokeText(layerName, lon, lat)
           }
         }
-        labelFeature.set('label-color', labelTextStroke)
 
         labelFeature.setStyle(new Style({
           renderer (coordinates, state) {
@@ -166,8 +161,8 @@ export default (context, inject) => {
             gradient.addColorStop(0, 'rgba(80,50,50,0.2)')
             ctx.beginPath() // verkar sätta inre gräns för fill
             ctx.arc(x, y, radius * 50, 0, 2 * Math.PI, true)
-            ctx.strokeStyle = 'rgba(80,50,50,0.5)' // sätter stroke färg
-            ctx.stroke() // ser till så stroke är aktiverad
+            // ctx.strokeStyle = 'rgba(80,50,50,0.5)' // sätter stroke färg
+            // ctx.stroke() // ser till så stroke är aktiverad
 
             renderLabelText(ctx, x, y, labelFeature.get('label-color', labelTextStroke))
           }
@@ -179,6 +174,7 @@ export default (context, inject) => {
             features: [labelFeature]
           })
         })
+        allFeatures.push(labelFeature)
         map.addLayer(labelLayer)
       }
     }

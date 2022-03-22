@@ -51,6 +51,7 @@ namespace GeoWalk_mvc.Controllers
 
             location.Walk = walk;
             location.Title = inputModel.title;
+            location.TypeOfLayer = inputModel.typeOfLayer;
             location.Latitude = inputModel.latitude;
             location.Longitude = inputModel.longitude;
 
@@ -83,6 +84,7 @@ namespace GeoWalk_mvc.Controllers
                 return NotFound();
             }
             location.Title = inputModel.title;
+            location.TypeOfLayer = inputModel.typeOfLayer;
             location.Latitude = inputModel.latitude;
             location.Longitude = inputModel.longitude;
             await _context.SaveChangesAsync();
@@ -95,6 +97,7 @@ namespace GeoWalk_mvc.Controllers
         {
             public int? walkId { get; set; }
             public string title { get; set; }
+            public string typeOfLayer { get; set; }
             public float latitude { get; set; }
             public float longitude { get; set; }
         }

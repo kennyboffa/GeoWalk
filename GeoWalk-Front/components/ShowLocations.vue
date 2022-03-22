@@ -123,6 +123,9 @@ export default {
     },
     goBack () {
       this.$router.go(-1)
+    },
+    onFeatureClick (clickedFeature) {
+      this.$router.push({ path: `/location/${clickedFeature}` })
     }
   }
 }

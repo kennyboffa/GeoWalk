@@ -94,7 +94,6 @@ export default {
 
         }
       ],
-      typeOfLayer: 'undefined', // skapa typ en checkbox för vilken typ det ska vara i dialog. - position, label, fun facts? showUser etc
       showToolTip: true,
       showLayers: [],
       aLayer: '',
@@ -172,11 +171,10 @@ export default {
       })
     },
     // adds all the current locations to the map
-    addCurrentPosition (layerName, [lon, lat], typeOfLayer) { // typeOfLayer = position, label, user
-      const createdLayer = this.mapHelper.addLayer(layerName, typeOfLayer, lon, lat)
-      this.mapHelper.addPosition(createdLayer.layerName, this.title, this.content)
+    addCurrentPosition (layerName, [lon, lat]) {
+      this.mapHelper.addPosition(layerName, lon, lat)
       this.mapHelper.createLabel(layerName, lon, lat)
-      console.log(createdLayer.values_)
+      // this.currentPositions.push([lon, lat])
     },
 
     // adds clicked positions after saving in dialog
@@ -191,9 +189,7 @@ export default {
         walkId: this.selectedWalkId,
         title: this.locationTitle,
         longitude: this.longitude,
-        latitude: this.latitude,
-        typeOfLayer: this.typeOfLayer
-
+        latitude: this.latitude
       }
       this.$axios
         .post('/location', newLocation)
