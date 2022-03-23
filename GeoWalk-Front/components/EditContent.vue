@@ -1,55 +1,44 @@
 <template>
-<v-list>
+  <v-list>
     <h2>Edit Content</h2>
-  <v-list-item>
-    <v-list-item-content v-if="content">
-            ID: {{content.id}} <br><br>
-      Title: {{content.title}}<br><br>
-      <!-- <v-btn class="warning">Edit</v-btn><br><br> -->
-      Info: {{content.info}} <br><br>
-      Questions: {{"questions"}} <br><br>
-      Answers: {{"answers"}} <br><br>
-      <v-form v-on:submit.prevent="onSubmit()">
-        <v-container>
-          <v-row>
-            <v-col cols="12" md="4">
-              <v-text-field
-              v-model="content.title"
-              label="Title"
-              required>
-              </v-text-field>
-            </v-col>
+    <v-list-item>
+      <v-list-item-content v-if="content">
+        ID: {{ content.id }} <br><br>
+        Title: {{ content.title }}<br><br>
+        <!-- <v-btn class="warning">Edit</v-btn><br><br> -->
+        Info: {{ content.info }} <br><br>
+        Questions: {{ "questions" }} <br><br>
+        Answers: {{ "answers" }} <br><br>
+        <v-form @submit.prevent="onSubmit()">
+          <v-container>
+            <v-row>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="content.title"
+                  label="Title"
+                  required
+                />
+              </v-col>
 
-           <v-col cols="12" md="4">
-              <v-text-field
-              v-model="content.info"
-              label="Info"
-              required>
-            </v-text-field>
-             </v-col>
-          <!-- <v-col cols="12" md="4">
-              <v-text-field
-              v-model="question"
-              label="Question"
-              required>
-              </v-text-field>
-             </v-col>
-
-          <v-col cols="12" md="4">
-              <v-text-field
-              v-model="answer"
-              label="Answer"
-              required>
-              </v-text-field>
-            </v-col> -->
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="content.info"
+                  label="Info"
+                  required
+                />
+              </v-col>
             </v-row>
-        </v-container>
-      </v-form>
-    </v-list-item-content>
-  </v-list-item>
-        <v-btn class="success" @click="onSubmit()">Update</v-btn>
-            <v-btn class="blue" @click="goBack()">Back</v-btn>
-</v-list>
+          </v-container>
+        </v-form>
+      </v-list-item-content>
+    </v-list-item>
+    <v-btn class="success" @click="onSubmit()">
+      Update
+    </v-btn>
+    <v-btn class="blue" @click="goBack()">
+      Back
+    </v-btn>
+  </v-list>
 </template>
 
 <script>

@@ -1,19 +1,18 @@
 <template>
-
   <v-container fluid>
-     <v-dialog
+    <v-dialog
       v-model="dialog"
       persistent
       max-width="600px"
     >
-      <template v-slot:activator="{ on, attrs }">
+      <template #activator="{ on, attrs }">
         <v-btn
           color="primary"
           dark
           v-bind="attrs"
           v-on="on"
         >
-       Add Content
+          Add Content
         </v-btn>
       </template>
       <v-card>
@@ -28,39 +27,39 @@
                 sm="6"
                 md="4"
               >
-                <v-text-field v-model="title"
+                <v-text-field
+                  v-model="title"
                   label="Title"
                   required
-                ></v-text-field>
+                />
               </v-col>
               <v-col
                 cols="12"
                 sm="6"
                 md="4"
-              >
-              </v-col>
-                    <v-col
+              />
+              <v-col
                 cols="12"
                 sm="6"
                 md="4"
               >
-                <v-text-field v-model="info"
+                <v-text-field
+                  v-model="info"
                   label="Info"
                   required
-                ></v-text-field>
+                />
               </v-col>
               <v-col
                 cols="12"
                 sm="6"
                 md="4"
-              >
-              </v-col>
+              />
             </v-row>
           </v-container>
           <small>*indicates required field</small>
         </v-card-text>
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn
             color="blue darken-1"
             text
@@ -68,9 +67,10 @@
           >
             Close
           </v-btn>
-          <v-btn @click="AddContent(title, info, selectedLocationId), dialog = false"
+          <v-btn
             color="blue darken-1"
             text
+            @click="AddContent(title, info, selectedLocationId), dialog = false"
           >
             Save
           </v-btn>

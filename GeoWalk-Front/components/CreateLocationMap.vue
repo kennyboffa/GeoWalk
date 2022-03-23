@@ -5,16 +5,6 @@
       persistent
       max-width="600px"
     >
-      <!-- <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          dark
-          v-bind="attrs"
-          v-on="on"
-        >
-       Add a Location
-        </v-btn>
-      </template> -->
       <v-card>
         <v-card-title>
           <span class="text-h5">Add a Location</span>

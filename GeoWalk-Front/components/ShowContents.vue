@@ -1,14 +1,5 @@
 <template>
   <v-container>
-    <h2>Content</h2>
-    <!-- <v-list>
-    <v-list-item v-for="(value, key) in location" :key="key">
-      <v-list-item-content>
-                  <td>ID: {{value.coordinates}} </td>
-      </v-list-item-content>
-            </v-list-item>
-                </v-list> -->
-
     <v-simple-table class="row-pointer">
       <template #default>
         <thead>

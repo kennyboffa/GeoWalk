@@ -28,7 +28,7 @@ export default (context, inject) => {
       toLonLat
     }
   }
-
+  // const zoomValue = null
   let hoveredFeatures = []
   const allFeatures = []
   const labelTextStroke = 'rgba(255, 255, 255, 1)'
@@ -63,27 +63,13 @@ export default (context, inject) => {
     }
     const map = new ol.Map(options) // Creates the map with above options
 
-    // sets the label to show true when feature is hovered over. Adds features to an array with all features for that location
-    map.on('pointermove', (e) => {
-      hoveredFeatures = []
-      const featureOver = map.forEachFeatureAtPixel(e.pixel, (feature) => {
-        feature.set('showLabel', 'true')
-        hoveredFeatures.push(`${feature.values_.layerName}_label`)
-        return feature
-      })
-
-      if (pointerOverFeature && pointerOverFeature !== featureOver) {
-        pointerOverFeature.set('showLabel', true)
-      }
-      pointerOverFeature = featureOver
-    })
     return {
       map,
-      addLayer: (layerName, typeOfLayer, x, y) => {
+      addLayer: (layerId, typeOfLayer, x, y) => {
         const feature = new ol.format.GeoJSON().readFeature(
           {
             type: 'Feature',
-            properties: { layerName, typeOfLayer },
+            properties: { layerId, typeOfLayer },
             style: styleFunction,
             geometry: {
               type: 'MultiPoint',
@@ -95,7 +81,7 @@ export default (context, inject) => {
           }
         )
         const vectorLayer = new ol.layer.VectorLayer({
-          name: layerName,
+          id: layerId,
           type: typeOfLayer,
 
           style: styleFunction,
@@ -107,20 +93,25 @@ export default (context, inject) => {
         map.addLayer(vectorLayer)
         return (vectorLayer)
       },
-      addPosition (layerName, title, content) {
-        const position = map.getLayers(layerName)
-        this.title = title
-        this.content = content
-        console.log(position)
+      addPosition (layer, title, content) {
+        layer.title = title
+        layer.content = content
+
+        // layor.addFeature(feature)
+
+        // layer.on("pointermove")
+        // feature.on("hover", () => {})
       },
-      removeLayerFromMap (layerName) {
-        const layer = map.getLayers().getArray().find(x => x.get('name') === layerName)
+      removeLayerFromMap (layerId) {
+        const layer = map.getLayers().getArray().find(x => x.get('id') === layerId)
         map.removeLayer(layer)
-        const layerLabel = map.getLayers().getArray().find(x => x.get('name') === `${layerName}_label`)
+        console.log(layer.title)
+        const layerLabel = map.getLayers().getArray().find(x => x.get('id') === `${layer.title}_label`)
         map.removeLayer(layerLabel)
       },
-      createLabel (layerName, lon, lat) {
-        layerName = `${layerName}_label`
+      createLabel (layer, lon, lat) {
+        console.log(layer.title)
+        layer.title = `${layer.title}_label`
         const labelFeature = new Feature({
           geometry: new Circle(([lon, lat]), 0)
         })
@@ -132,8 +123,8 @@ export default (context, inject) => {
           ctx.textBaseline = 'bottom'
           ctx.font = 'bold 15px roboto'
           // ctx.filter = 'drop-shadow(7px 7px 2px #e81)'
-          if (hoveredFeatures.includes(layerName)) {
-            ctx.fillText(layerName, lon, lat)
+          if (hoveredFeatures.includes(layer.values_.id)) {
+            ctx.fillText(layer.title, lon, lat)
             // ctx.strokeText(layerName, lon, lat)
           }
         }
@@ -168,8 +159,32 @@ export default (context, inject) => {
           }
         })
         )
+        map.on('pointermove', (e) => {
+          hoveredFeatures = []
+          const featureOver = map.forEachFeatureAtPixel(e.pixel, (feature) => {
+            feature.set('showLabel', 'true')
+            hoveredFeatures.push(feature.values_.layerId)
+            return feature
+          })
+
+          if (pointerOverFeature && pointerOverFeature !== featureOver) {
+            pointerOverFeature.set('showLabel', true)
+          }
+          pointerOverFeature = featureOver
+        })
+        // this.zoomValue = map.getView().values_.zoom
+        // map.getView().on('change:resolution', (e) => {
+        //   const newZoomValue = e.target.values_.zoom
+        //   if (newZoomValue > zoomValue) {
+        //     console.log('smaller')
+        //     this.zoomValue = newZoomValue
+        //   } else {
+        //     console.log('larger')
+        //     this.zoomValue = newZoomValue
+        //   }
+        // })
         const labelLayer = new ol.layer.VectorLayer({
-          name: layerName,
+          name: layer.title,
           source: new ol.source.VectorSource({
             features: [labelFeature]
           })

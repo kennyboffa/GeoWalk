@@ -1,5 +1,15 @@
 <template>
   <v-container>
+    <v-dialog
+      v-model="dialog"
+      persistent
+      max-width="600px"
+    >
+      <ContentDialog
+        :content-location-id="contentLocationId"
+        @dialog-close="dialog = false"
+      />
+    </v-dialog>
     <h2>Locations</h2>
     <v-list>
       <v-list-item v-if="walk">
@@ -80,9 +90,12 @@ export default {
   },
   data () {
     return {
+      dialog: false,
       locationRemoved: null,
       walk: undefined,
-      locations: undefined
+      locations: undefined,
+      contentLocationId: null
+
     }
   },
 
@@ -119,7 +132,9 @@ export default {
       this.locations.push(location)
     },
     onRowClick (locationId) {
-      this.$router.push({ path: `/location/${locationId}` })
+      // this.$router.push({ path: `/location/${locationId}` })
+      this.dialog = true
+      this.contentLocationId = locationId
     },
     goBack () {
       this.$router.go(-1)
@@ -127,8 +142,10 @@ export default {
     onFeatureClick (clickedFeature) {
       this.$router.push({ path: `/location/${clickedFeature}` })
     }
+
   }
 }
+
 </script>
 
 <style>
