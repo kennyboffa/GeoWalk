@@ -96,44 +96,6 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <!-- <v-simple-table class="row-pointer">
-      <template #default>
-        <thead>
-          <tr>
-            <th class="text-left">
-              Title
-            </th>
-            <th class="text-left">
-              Location ID
-            </th>
-            <th class="text-left">
-              Longitude
-            </th>
-            <th class="text-left">
-              Latitude
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(item, key) in locations" :key="key" @click="onRowClick(item.id)">
-            <td> {{ item.title }} </td>
-            <td> {{ item.id }} </td>
-            <td> {{ item.latitude }} </td>
-            <td> {{ item.longitude }} </td>
-            <td>
-              <v-btn class="warning" @click.stop="EditLocation(item.id)">
-                Edit
-              </v-btn>
-            </td>
-            <td>
-              <v-btn class="red" @click.stop="RemoveLocation(item.id)">
-                Remove
-              </v-btn>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-    </v-simple-table> -->
     <v-btn class="blue back-button" @click="goBack()">
       Back
     </v-btn>

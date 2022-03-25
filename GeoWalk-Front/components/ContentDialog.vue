@@ -81,6 +81,41 @@
       >
         Save
       </v-btn>
+      <div
+        v-for="(content, key) in contents"
+        :key="key"
+      >
+        <v-simple-table class="location-content">
+          <tr>
+            <td class="location-content-items">
+              {{ content.title }}
+            </td>
+            <td class="location-content-items">
+              {{ content.info }}
+            </td>
+            <td class="location-content-items">
+              {{ content.question }}
+            </td>
+            <td class="location-content-items">
+              {{ content.answers }}
+            </td>
+            <td>
+              <v-btn
+                class="
+              warning ep-btn"
+                @click.stop="EditContent(content.id)"
+              >
+                Edit
+              </v-btn>
+            </td>
+            <td>
+              <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
+                Remove
+              </v-btn>
+            </td>
+          </tr>
+        </v-simple-table>
+      </div>
     </v-card-actions>
   </v-card>
 </template>
@@ -92,6 +127,7 @@ export default {
   },
   data () {
     return {
+      contents: [],
       title: undefined,
       radio1: 'Info',
       radio2: 'Question',
@@ -101,6 +137,7 @@ export default {
       answers: '' // make into an array
     }
   },
+
   methods: {
     AddContent () {
       const newContent = {
@@ -121,6 +158,13 @@ export default {
         this.answers = ''
       }
     }
+    // GetContent () {
+    //   this.$axios
+    //     .get(`/location/${this.contentLocationId}`)
+    //     .then((res) => {
+    //       this.contents = res.data.contents
+    //     })
+    // }
   }
 }
 

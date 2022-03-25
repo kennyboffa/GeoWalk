@@ -111,7 +111,7 @@ export default (context, inject) => {
       },
       createLabel (layer, lon, lat) {
         console.log(layer.title)
-        layer.title = `${layer.title}_label`
+        layer.title = `${layer.title}`
         const labelFeature = new Feature({
           geometry: new Circle(([lon, lat]), 0)
         })

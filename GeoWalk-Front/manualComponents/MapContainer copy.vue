@@ -1,17 +1,17 @@
 <template>
   <div>
-    {{ aLayer }}
-    <v-tooltip>
-      <template #activator="{ on }">
-        <v-btn v-if="showToolTip" color="primary" dark top v-on="on">
-          Top
-        </v-btn>
-      </template>
-      <span>Top tooltip</span>
-    </v-tooltip>
-
     <v-dialog
-      v-model="dialog"
+      v-model="addContentDialog"
+      persistent
+      max-width="600px"
+    >
+      <ContentDialog
+        :content-location-id="contentLocationId"
+        @dialog-close="addContentDialog = false"
+      />
+    </v-dialog>
+    <v-dialog
+      v-model="addLocationDialog"
       persistent
       max-width="600px"
     >
@@ -28,12 +28,15 @@
                 md="4"
               >
                 <v-text-field
-                  v-model="locationTitle"
-                  label="Location Title"
-                  value=":this.locationTitle"
+                  v-model="title"
+                  label="* Location Title"
+                  value=":this.title"
                   required
                 />
-                <v-text-field
+                <div v-if="title === undefined || title === '' " class="dialog-required-message">
+                  Title has to be set
+                </div>
+                <!-- <v-text-field
                   v-model="latitude"
                   label="Location Latitude"
                   value=":this.latitude"
@@ -44,7 +47,7 @@
                   label="Location Longitude"
                   value=":this.longitude"
                   required
-                />
+                /> -->
               </v-col>
               <v-col
                 cols="12"
@@ -60,7 +63,7 @@
           <v-btn
             color="blue darken-1"
             text
-            @click="dialog=false"
+            @click="addLocationDialog=false"
           >
             Cancel
           </v-btn>
@@ -94,13 +97,16 @@ export default {
 
         }
       ],
+      contentLocationId: null,
+      typeOfLayer: 'undefined', // skapa typ en checkbox för vilken typ det ska vara i dialog. - position, label, fun facts? showUser etc
       showToolTip: true,
       showLayers: [],
       aLayer: '',
-      dialog: false,
+      addContentDialog: false,
+      addLocationDialog: false,
       latitude: '',
       longitude: '',
-      locationTitle: '',
+      title: undefined,
       mapHelper: null,
       positions: [
         {
@@ -116,8 +122,7 @@ export default {
   watch: {
     locationRemoved (locationId) {
       if (locationId) {
-        this.mapHelper.removeLayerFromMap(`location_${locationId}`)
-        // this.renderChart(this.locations) // den körs, men visar även de som tagits bort.
+        this.mapHelper.removeLayerFromMap(`${locationId}`)
       }
     }
   },
@@ -145,60 +150,63 @@ export default {
       // reads the current locations and sends to method to add them to the map
       for (const location of locations) {
         const lonLat = this.$ol.format.fromLonLat([(location.longitude), (location.latitude)])
-        this.addCurrentPosition(`location_${location.id}`, lonLat)
+        this.title = location.title
+        this.addCurrentPosition(`${location.id}`, lonLat)
       }
       this.mapHelper.map.on('click', (e) => {
         const clickedCoordinates = this.$ol.format.toLonLat(e.coordinate)
         this.addNewPosition(clickedCoordinates)
       })
 
-      let stopPropagation = false
+      // let stopPropagation = false
       this.mapHelper.map.on('click', (e) => {
-        if (stopPropagation) {
-          return false
-        }
-        console.log(e)
-        console.log(Object.keys(e))
+        // if (stopPropagation) {
+        //   // return false
+        // }
 
         this.mapHelper.map.forEachFeatureAtPixel(e.pixel, (feature) => {
-          if (feature.values_.layerName.length > 0) {
-            stopPropagation = true
-            let locationId = feature.values_.layerName.split('.')
-            locationId = feature.values_.layerName.split('_')
-            this.$router.push({ path: `/location/${locationId[1]}` })
+          if (feature.values_.layerId) {
+            this.addLocationDialog = false
+            // stopPropagation = true
+            this.addContentDialog = true
+            this.contentLocationId = parseInt(feature.values_.layerId)
           }
         })
       })
     },
     // adds all the current locations to the map
-    addCurrentPosition (layerName, [lon, lat]) {
-      this.mapHelper.addPosition(layerName, lon, lat)
-      this.mapHelper.createLabel(layerName, lon, lat)
-      // this.currentPositions.push([lon, lat])
+    addCurrentPosition (layerId, [lon, lat], typeOfLayer) { // typeOfLayer = position, label, user
+      const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, lon, lat)
+      this.mapHelper.addPosition(createdLayer, this.title, this.content)
+      this.mapHelper.createLabel(createdLayer, lon, lat)
     },
 
     // adds clicked positions after saving in dialog
     addNewPosition ([lon, lat]) {
       this.latitude = lat
       this.longitude = lon
-      this.dialog = true
-      this.title = this.locationTitle
+      this.addLocationDialog = true
     },
     PostLocation () {
       const newLocation = {
         walkId: this.selectedWalkId,
-        title: this.locationTitle,
+        title: this.title,
         longitude: this.longitude,
-        latitude: this.latitude
+        latitude: this.latitude,
+        typeOfLayer: this.typeOfLayer
+
       }
-      this.$axios
-        .post('/location', newLocation)
-        .then((res) => {
-          this.dialog = false
-          const lonLat = this.$ol.format.fromLonLat([(res.data.longitude), (res.data.latitude)])
-          this.addCurrentPosition(`location_${res.data.id}`, lonLat)
-          this.$emit('location-added')
-        })
+      if (this.title !== undefined && this.title !== '') {
+        this.$axios
+          .post('/location', newLocation)
+          .then((res) => {
+            this.addLocationDialog = false
+            const lonLat = this.$ol.format.fromLonLat([(res.data.longitude), (res.data.latitude)])
+            this.addCurrentPosition(`${res.data.id}`, lonLat)
+            this.$emit('location-added')
+            this.title = undefined
+          })
+      }
     }
 
   }
@@ -207,7 +215,12 @@ export default {
 </script>
 <style >
 #map {
- width:1000px;
- height:800px;
+ max-width:1200px;
+ min-width:500px;
+ height:840px;
+}
+.dialog-required-message{
+  font-size: 12px;
+  color:red
 }
 </style>
