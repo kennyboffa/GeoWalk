@@ -61,8 +61,8 @@ export default {
           this.walks = res.data
         })
     },
-    EditWalk (id) {
-      this.$router.push({ path: `/EditWalk/${id}` })
+    EditWalk (walkId) {
+      this.$router.push({ path: `/EditWalk/${walkId}` })
     },
     RemoveWalk (walkId) {
       this.$axios

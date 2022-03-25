@@ -10,6 +10,7 @@
         @dialog-close="dialog = false"
       />
     </v-dialog>
+
     <h2>Locations</h2>
     <v-list>
       <v-list-item v-if="walk">
@@ -21,8 +22,81 @@
         </v-list-item-content>
       </v-list-item>
     </v-list>
+    <v-expansion-panels
+      focusable
+    >
+      <v-expansion-panel
+        v-for="(item,i) in locations"
+        :key="i"
+        accordion
+        @click="onRowClick(item.id)"
+      >
+        <v-expansion-panel-header ripple>
+          <div class="main-info">
+            Title: {{ item.title }}
+          </div>
+          <div class="main-info">
+            Location ID: {{ item.id }}
+          </div>
+          <div class="main-info">
+            Longitude: {{ item.longitude }}
+          </div>
+          <div class="main-info">
+            Latitude: {{ item.latitude }}
+          </div>
+          <div class="btn-container">
+            <v-btn class="warning ep-btn" @click.stop="EditLocation(item.id)">
+              Edit
+            </v-btn>
+            <v-btn class="red ep-btn" @click.stop="RemoveLocation(item.id)">
+              Remove
+            </v-btn>
+          </div>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content
+          v-for="(content, key) in contents"
+          :key="key"
+        >
+          <v-simple-table class="location-content">
+            <tr>
+              <td class="location-content-items">
+                {{ content.title }}
+              </td>
+              <td class="location-content-items">
+                {{ content.info }}
+              </td>
+              <td class="location-content-items">
+                {{ content.question }}
+              </td>
+              <td class="location-content-items">
+                {{ content.answers }}
+              </td>
+              <td>
+                <v-btn
+                  class="
+              warning ep-btn"
+                  @click.stop="EditContent(content.id)"
+                >
+                  Edit
+                </v-btn>
+              </td>
+              <td>
+                <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
+                  <!-- Funkar inte än -->
+                  Remove
+                </v-btn>
+              </td>
+            </tr>
+          </v-simple-table>
+        </v-expansion-panel-content>
+        <v-btn class="green" @click.stop="AddContentClick(item.id)">
+          <!-- Funkar inte än -->
+          Add Content
+        </v-btn>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
-    <v-simple-table class="row-pointer">
+    <!-- <v-simple-table class="row-pointer">
       <template #default>
         <thead>
           <tr>
@@ -59,21 +133,23 @@
           </tr>
         </tbody>
       </template>
-    </v-simple-table>
-    <v-btn class="blue" @click="goBack()">
+    </v-simple-table> -->
+    <v-btn class="blue back-button" @click="goBack()">
       Back
     </v-btn>
     <!-- //problem om det inte finns några locations -->
-    <ClientOnly v-if="locations">
-      <MapContainer
-        ref="mapContainer"
-        :location-removed="locationRemoved"
-        :selected-walk-id="selectedWalkId"
-        :locations="locations"
-        @location-added="addLocation, GetWalk()"
-        @location-removed="GetWalk()"
-      />
-    </ClientOnly>
+    <div class="map-container">
+      <ClientOnly v-if="locations">
+        <MapContainer
+          ref="mapContainer"
+          :location-removed="locationRemoved"
+          :selected-walk-id="selectedWalkId"
+          :locations="locations"
+          @location-added="addLocation, GetWalk()"
+          @location-removed="GetWalk()"
+        />
+      </ClientOnly>
+    </div>
   </v-container>
 </template>
 
@@ -90,6 +166,7 @@ export default {
   },
   data () {
     return {
+      contents: [],
       dialog: false,
       locationRemoved: null,
       walk: undefined,
@@ -133,16 +210,38 @@ export default {
     },
     onRowClick (locationId) {
       // this.$router.push({ path: `/location/${locationId}` })
-      this.dialog = true
-      this.contentLocationId = locationId
+      // this.dialog = true
+      this.contents = this.GetContent(locationId)
+      // console.log(this.contents)
     },
     goBack () {
       this.$router.go(-1)
     },
     onFeatureClick (clickedFeature) {
       this.$router.push({ path: `/location/${clickedFeature}` })
+    },
+    GetContent (locationId) {
+      this.$axios
+        .get(`/location/${locationId}`)
+        .then((res) => {
+          this.contents = res.data.contents
+        })
+    },
+    EditContent (id) {
+      this.$router.push({ path: `/content/${id}` })
+    },
+    AddContentClick (locationId) {
+      this.dialog = true
+      this.contentLocationId = locationId
+    },
+    RemoveContent (contentId, locationId) {
+      this.$axios
+        .delete(`/content/${contentId}`)
+        .then((res) => {
+          this.content = res.data
+          this.GetContent(locationId)
+        })
     }
-
   }
 }
 
@@ -151,4 +250,44 @@ export default {
 <style>
 .row-pointer > .v-data-table__wrapper > table > tbody > tr:hover {
   cursor: pointer;}
+  .btn-container{
+    display: flexbox;
+    text-align:right;
+    margin-left: auto;
+  }
+  .ep-btn {
+display: flexbox;
+    margin-left:20px;
+    margin-right:40px;
+  max-width: 6vw;
+  }
+  .main-info{
+    padding:10px;
+    display: inline-flex;
+    width:170px;
+    text-align:center;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .map-container{
+    display: flexbox;
+    padding:80px;
+    width: auto;
+  }
+  .back-button{
+    margin-top: 15px;
+  }
+  .location-content{
+
+    margin:10px;
+    max-width:100%;
+    border-style: solid;
+    border-color:rgba(98, 107, 151, 0.438);
+  }
+    .location-content-items{
+    padding:20px;
+    width: 50%;
+    display: flexbox;
+
+  }
 </style>

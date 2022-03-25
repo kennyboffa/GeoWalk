@@ -30,9 +30,12 @@
             </v-radio-group>
             <v-text-field
               v-model="title"
-              label="Title"
+              label="* Title"
               value=":this.title"
             />
+            <div v-if="title === undefined || title === '' " class="dialog-required-message">
+              Title has to be set
+            </div>
 
             <v-text-field
               v-if="radioButtonSelected === radio1"
@@ -74,7 +77,7 @@
       <v-btn
         color="blue darken-1"
         text
-        @click="AddContent(contentLocationId, title, info, question, answers), $emit('dialog-close')"
+        @click="AddContent(contentLocationId, title, info, question, answers)"
       >
         Save
       </v-btn>
@@ -89,7 +92,7 @@ export default {
   },
   data () {
     return {
-      title: '',
+      title: undefined,
       radio1: 'Info',
       radio2: 'Question',
       radioButtonSelected: 'Info',
@@ -107,10 +110,16 @@ export default {
         question: this.question,
         answers: this.answers
       }
-      this.$axios
-        .post('/content/', newContent)
-      this.dialog = false
-      this.$emit('content-added')
+      if (this.title !== undefined && this.title !== '') {
+        this.$axios
+          .post('/content/', newContent)
+        this.dialog = false
+        this.$emit('dialog-close')
+        this.info = ''
+        this.title = undefined
+        this.question = ''
+        this.answers = ''
+      }
     }
   }
 }
@@ -118,5 +127,8 @@ export default {
 </script>
 
 <style>
-
+.dialog-required-message{
+  font-size: 12px;
+  color:red
+}
 </style>

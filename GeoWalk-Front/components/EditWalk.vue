@@ -1,37 +1,40 @@
 <template>
-<v-list>
-  <h2>Edit Walk</h2>
-  <v-list-item>
-    <v-list-item-content v-if="walk">
-            ID: {{walk.id}} <br><br>
-      Name: {{walk.walkName}}<br><br>
+  <v-list>
+    <h2>Edit Walk</h2>
+    <v-list-item>
+      <v-list-item-content v-if="walk">
+        ID: {{ walk.id }} <br><br>
+        Name: {{ walk.walkName }}<br><br>
 
-      <v-form v-on:submit.prevent="onSubmit()">
-        <v-container>
-          <v-row>
-            <v-col cols="12" md="4">
-              <v-text-field
-              v-model="walk.walkName"
-              label="Walk Name"
-              required>
-              </v-text-field>
-            </v-col>
-
+        <v-form @submit.prevent="onSubmit()">
+          <v-container>
+            <v-row>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="walk.walkName"
+                  label="Walk Name"
+                  required
+                />
+              </v-col>
             </v-row>
-        </v-container>
-      </v-form>
-    </v-list-item-content>
-  </v-list-item>
-        <v-btn class="success" @click="onSubmit()">Update</v-btn>
-            <v-btn class="blue" @click="goBack()">Back</v-btn>
-</v-list>
+          </v-container>
+        </v-form>
+      </v-list-item-content>
+    </v-list-item>
+    <v-btn class="success" @click="onSubmit()">
+      Update
+    </v-btn>
+    <v-btn class="blue" @click="goBack()">
+      Back
+    </v-btn>
+  </v-list>
 </template>
 
 <script>
 export default {
-  props: [
-    'selectedWalkId'
-  ],
+  props: {
+    selectedWalkId: { type: Number, default: null }
+  },
   data () {
     return {
       walk: {
@@ -48,7 +51,7 @@ export default {
       this.$axios
         .get(`/walk/${this.selectedWalkId}`)
         .then((res) => {
-          this.walk = res.data[0]
+          this.walk = res.data
         })
     },
     onSubmit () {

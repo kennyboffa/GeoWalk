@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+      "dev:host": "nuxt --hostname '0' --port 8000",
     "dev": "nuxt",
     "build": "nuxt build",
     "start": "nuxt start",

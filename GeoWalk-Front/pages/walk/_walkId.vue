@@ -1,5 +1,7 @@
 <template>
-  <ShowLocations :selected-walk-id="walkId" @mapPointRemoved="$refs.ShowLocations.setMapState()" />
+  <div>
+    <ShowLocations :selected-walk-id="walkId" @mapPointRemoved="$refs.ShowLocations.setMapState()" />
+  </div>
 </template>
 
 <script>

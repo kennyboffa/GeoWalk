@@ -29,11 +29,14 @@
               >
                 <v-text-field
                   v-model="title"
-                  label="Location Title"
+                  label="* Location Title"
                   value=":this.title"
                   required
                 />
-                <v-text-field
+                <div v-if="title === undefined || title === '' " class="dialog-required-message">
+                  Title has to be set
+                </div>
+                <!-- <v-text-field
                   v-model="latitude"
                   label="Location Latitude"
                   value=":this.latitude"
@@ -44,7 +47,7 @@
                   label="Location Longitude"
                   value=":this.longitude"
                   required
-                />
+                /> -->
               </v-col>
               <v-col
                 cols="12"
@@ -82,7 +85,7 @@
 export default {
   name: 'Map',
   props: {
-    contentLocationId: { type: Number, default: null },
+    // contentLocationId: { type: Number, default: null },
     locationRemoved: { type: Number, default: null },
     selectedWalkId: { type: Number, default: null },
     locations: { type: Array, default: () => [] }
@@ -95,6 +98,7 @@ export default {
 
         }
       ],
+      contentLocationId: null,
       typeOfLayer: 'undefined', // skapa typ en checkbox för vilken typ det ska vara i dialog. - position, label, fun facts? showUser etc
       showToolTip: true,
       showLayers: [],
@@ -155,17 +159,18 @@ export default {
         this.addNewPosition(clickedCoordinates)
       })
 
-      let stopPropagation = false
+      // let stopPropagation = false
       this.mapHelper.map.on('click', (e) => {
-        if (stopPropagation) {
-          return false
-        }
+        // if (stopPropagation) {
+        //   // return false
+        // }
 
         this.mapHelper.map.forEachFeatureAtPixel(e.pixel, (feature) => {
           if (feature.values_.layerId) {
             this.addLocationDialog = false
-            stopPropagation = true
-            this.addContentDialog = true // visar bara på första klicket på feature.
+            // stopPropagation = true
+            this.addContentDialog = true
+            this.contentLocationId = parseInt(feature.values_.layerId)
           }
         })
       })
@@ -192,14 +197,17 @@ export default {
         typeOfLayer: this.typeOfLayer
 
       }
-      this.$axios
-        .post('/location', newLocation)
-        .then((res) => {
-          this.addLocationDialog = false
-          const lonLat = this.$ol.format.fromLonLat([(res.data.longitude), (res.data.latitude)])
-          this.addCurrentPosition(`${res.data.id}`, lonLat)
-          this.$emit('location-added')
-        })
+      if (this.title !== undefined && this.title !== '') {
+        this.$axios
+          .post('/location', newLocation)
+          .then((res) => {
+            this.addLocationDialog = false
+            const lonLat = this.$ol.format.fromLonLat([(res.data.longitude), (res.data.latitude)])
+            this.addCurrentPosition(`${res.data.id}`, lonLat)
+            this.$emit('location-added')
+            this.title = undefined
+          })
+      }
     }
 
   }
@@ -208,7 +216,12 @@ export default {
 </script>
 <style >
 #map {
- width:1000px;
- height:800px;
+ max-width:1200px;
+ min-width:500px;
+ height:840px;
+}
+.dialog-required-message{
+  font-size: 12px;
+  color:red
 }
 </style>
