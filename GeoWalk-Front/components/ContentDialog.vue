@@ -51,9 +51,21 @@
             />
             <v-text-field
               v-if="radioButtonSelected === radio2"
-              v-model="answers"
-              label="Answers"
-              value=":this.answers"
+              v-model="correctAnswer"
+              label="The Correct Answer"
+              value=":this.correctAnswer"
+            />
+            <v-text-field
+              v-if="radioButtonSelected === radio2"
+              v-model="answerTwo"
+              label="Answer"
+              value=":this.answertwo"
+            />
+            <v-text-field
+              v-if="radioButtonSelected === radio2"
+              v-model="answerThree"
+              label="Answer"
+              value=":this.answerthree"
             />
           </v-col>
           <v-col
@@ -77,11 +89,11 @@
       <v-btn
         color="blue darken-1"
         text
-        @click="AddContent(contentLocationId, title, info, question, answers)"
+        @click="AddContent(contentLocationId, title, info, question, correctAnswer, answerTwo, answerThree)"
       >
         Save
       </v-btn>
-      <div
+      <!-- <div
         v-for="(content, key) in contents"
         :key="key"
       >
@@ -97,7 +109,13 @@
               {{ content.question }}
             </td>
             <td class="location-content-items">
-              {{ content.answers }}
+              {{ content.correctAnswer }}
+            </td>
+            <td class="location-content-items">
+              {{ content.answerTwo }}
+            </td>
+            <td class="location-content-items">
+              {{ content.answerThree }}
             </td>
             <td>
               <v-btn
@@ -115,7 +133,7 @@
             </td>
           </tr>
         </v-simple-table>
-      </div>
+      </div> -->
     </v-card-actions>
   </v-card>
 </template>
@@ -134,7 +152,9 @@ export default {
       radioButtonSelected: 'Info',
       info: '',
       question: '',
-      answers: '' // make into an array
+      correctAnswer: '',
+      answerTwo: '',
+      answerThree: ''
     }
   },
 
@@ -145,7 +165,9 @@ export default {
         title: this.title,
         info: this.info,
         question: this.question,
-        answers: this.answers
+        correctAnswer: this.correctAnswer,
+        answerTwo: this.answerTwo,
+        answerThree: this.answerThree
       }
       if (this.title !== undefined && this.title !== '') {
         this.$axios
@@ -155,7 +177,9 @@ export default {
         this.info = ''
         this.title = undefined
         this.question = ''
-        this.answers = ''
+        this.correctAnswer = ''
+        this.answerTwo = ''
+        this.answerThree = ''
       }
     }
     // GetContent () {

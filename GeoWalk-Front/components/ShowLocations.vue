@@ -58,7 +58,24 @@
           :key="key"
         >
           <v-simple-table class="location-content">
-            <tr>
+            <thead>
+              <tr>
+                <th class="text-left">
+                  Title
+                </th>
+                <th class="text-left">
+                  Info
+                </th>
+                <th class="text-left">
+                  Question
+                </th>
+                <th class="text-left">
+                  Answers
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
               <td class="location-content-items">
                 {{ content.title }}
               </td>
@@ -69,8 +86,16 @@
                 {{ content.question }}
               </td>
               <td class="location-content-items">
-                {{ content.answers }}
+                {{ content.correctAnswer }}
               </td>
+              <td class="location-content-items">
+                {{ content.answerTwo }}
+              </td>
+              <td class="location-content-items">
+                {{ content.answerThree }}
+              </td>
+            </tbody>
+            <tr>
               <td>
                 <v-btn
                   class="
@@ -80,9 +105,9 @@
                   Edit
                 </v-btn>
               </td>
+
               <td>
                 <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
-                  <!-- Funkar inte än -->
                   Remove
                 </v-btn>
               </td>
@@ -90,7 +115,6 @@
           </v-simple-table>
         </v-expansion-panel-content>
         <v-btn class="green" @click.stop="AddContentClick(item.id)">
-          <!-- Funkar inte än -->
           Add Content
         </v-btn>
       </v-expansion-panel>
@@ -99,7 +123,6 @@
     <v-btn class="blue back-button" @click="goBack()">
       Back
     </v-btn>
-    <!-- //problem om det inte finns några locations -->
     <div class="map-container">
       <ClientOnly v-if="locations">
         <MapContainer
@@ -243,8 +266,8 @@ display: flexbox;
 
     margin:10px;
     max-width:100%;
-    border-style: solid;
-    border-color:rgba(98, 107, 151, 0.438);
+    /* border-style: solid;
+    border-color:rgba(98, 107, 151, 0.438); */
   }
     .location-content-items{
     padding:20px;

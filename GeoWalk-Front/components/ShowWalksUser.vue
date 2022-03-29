@@ -24,30 +24,56 @@
             <td>{{ key }} </td>
             <td>{{ value.walkName }} </td>
             <td>{{ 'length' }}</td>
-            <td>{{ '4' }}</td>
+            <td>{{ locations }}</td>
           </tr>
         </tbody>
       </template>
     </v-simple-table>
+    <div class="map-container">
+      <ClientOnly>
+        <MapContainerUser
+          ref="mapContainer"
+        />
+      </ClientOnly>
+    </div>
   </v-container>
 </template>
 
 <script>
+
+import MapContainerUser from '../manualComponents/MapContainerUser.vue'
+import 'ol/ol.css'
 export default {
+  components: {
+    MapContainerUser
+  },
   data () {
     return {
-      walks: null
+      walks: [],
+      locations: undefined
     }
   },
   created () {
-    this.getWalks()
+    this.GetWalks()
+  },
+  mounted () {
   },
   methods: {
-    getWalks () {
+    GetWalks () {
       this.$axios
         .get('/walk')
         .then((res) => {
           this.walks = res.data
+        })
+    },
+    GetWalk (id) {
+      console.log(id)
+      this.$axios
+        .get(`/walk/${id}`)
+        .then((res) => {
+          this.locations = res.data.locations
+          console.log(this.locations)
+          // this.$emit('walkId')
         })
     },
     EditWalk (id) {

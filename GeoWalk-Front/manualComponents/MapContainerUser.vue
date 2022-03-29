@@ -153,31 +153,27 @@ export default {
         this.title = location.title
         this.addCurrentPosition(`${location.id}`, lonLat)
       }
-      this.mapHelper.map.on('click', (e) => {
-        const clickedCoordinates = this.$ol.format.toLonLat(e.coordinate)
-        this.addNewPosition(clickedCoordinates)
-      })
+      // this.mapHelper.map.on('click', (e) => {
+      //   const clickedCoordinates = this.$ol.format.toLonLat(e.coordinate)
+      //   this.addNewPosition(clickedCoordinates)
+      // })
 
-      // let stopPropagation = false
-      this.mapHelper.map.on('click', (e) => {
-        // if (stopPropagation) {
-        //   // return false
-        // }
+      // this.mapHelper.map.on('click', (e) => {
 
-        this.mapHelper.map.forEachFeatureAtPixel(e.pixel, (feature) => {
-          if (feature.values_.layerId) {
-            this.addLocationDialog = false
-            // stopPropagation = true
-            this.addContentDialog = true
-            this.contentLocationId = parseInt(feature.values_.layerId)
-          }
-        })
-      })
+      //   this.mapHelper.map.forEachFeatureAtPixel(e.pixel, (feature) => {
+      //     if (feature.values_.layerId) {
+      //       this.addLocationDialog = false
+      //       // stopPropagation = true
+      //       this.addContentDialog = true
+      //       this.contentLocationId = parseInt(feature.values_.layerId)
+      //     }
+      // })
+      // })
     },
     // adds all the current locations to the map
     addCurrentPosition (layerId, [lon, lat], typeOfLayer) { // typeOfLayer = position, label, user
       const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, lon, lat)
-      this.mapHelper.addPosition(createdLayer, this.title, this.content)
+      this.mapHelper.addPosition(createdLayer, this.title)
       this.mapHelper.createLabel(createdLayer, lon, lat)
     },
 

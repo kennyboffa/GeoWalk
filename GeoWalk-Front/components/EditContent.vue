@@ -4,11 +4,7 @@
     <v-list-item>
       <v-list-item-content v-if="content">
         ID: {{ content.id }} <br><br>
-        Title: {{ content.title }}<br><br>
         <!-- <v-btn class="warning">Edit</v-btn><br><br> -->
-        Info: {{ content.info }} <br><br>
-        Questions: {{ "questions" }} <br><br>
-        Answers: {{ "answers" }} <br><br>
         <v-form @submit.prevent="onSubmit()">
           <v-container>
             <v-row>
@@ -24,6 +20,34 @@
                 <v-text-field
                   v-model="content.info"
                   label="Info"
+                  required
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="content.question"
+                  label="Question"
+                  required
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="content.correctAnswer"
+                  label="Correct Answer"
+                  required
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="content.answerTwo"
+                  label="Answer"
+                  required
+                />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field
+                  v-model="content.answerThree"
+                  label="Answer"
                   required
                 />
               </v-col>
