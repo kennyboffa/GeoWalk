@@ -21,11 +21,13 @@
                 v-model="radio1"
                 label="Information/Fact"
                 value="Info"
+                @click="type='info'"
               />
               <v-radio
                 v-model="radio2"
                 label="Question/Answers"
                 value="Question"
+                @click="type='questionanswer'"
               />
             </v-radio-group>
             <v-text-field
@@ -89,51 +91,10 @@
       <v-btn
         color="blue darken-1"
         text
-        @click="AddContent(contentLocationId, title, info, question, correctAnswer, answerTwo, answerThree)"
+        @click="AddContent(contentLocationId, type, title, info, question, correctAnswer, answerTwo, answerThree)"
       >
         Save
       </v-btn>
-      <!-- <div
-        v-for="(content, key) in contents"
-        :key="key"
-      >
-        <v-simple-table class="location-content">
-          <tr>
-            <td class="location-content-items">
-              {{ content.title }}
-            </td>
-            <td class="location-content-items">
-              {{ content.info }}
-            </td>
-            <td class="location-content-items">
-              {{ content.question }}
-            </td>
-            <td class="location-content-items">
-              {{ content.correctAnswer }}
-            </td>
-            <td class="location-content-items">
-              {{ content.answerTwo }}
-            </td>
-            <td class="location-content-items">
-              {{ content.answerThree }}
-            </td>
-            <td>
-              <v-btn
-                class="
-              warning ep-btn"
-                @click.stop="EditContent(content.id)"
-              >
-                Edit
-              </v-btn>
-            </td>
-            <td>
-              <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
-                Remove
-              </v-btn>
-            </td>
-          </tr>
-        </v-simple-table>
-      </div> -->
     </v-card-actions>
   </v-card>
 </template>
@@ -154,20 +115,24 @@ export default {
       question: '',
       correctAnswer: '',
       answerTwo: '',
-      answerThree: ''
+      answerThree: '',
+      type: 'info'
     }
   },
 
   methods: {
+
     AddContent () {
       const newContent = {
         locationId: this.contentLocationId,
+        type: this.type,
         title: this.title,
         info: this.info,
         question: this.question,
         correctAnswer: this.correctAnswer,
         answerTwo: this.answerTwo,
         answerThree: this.answerThree
+
       }
       if (this.title !== undefined && this.title !== '') {
         this.$axios

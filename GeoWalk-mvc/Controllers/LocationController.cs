@@ -66,6 +66,8 @@ namespace GeoWalk_mvc.Controllers
 
         {
             var location = await _context.Locations.Include(x => x.Contents).FirstOrDefaultAsync(x => x.Id == id);
+            //var contents = _context.Locations.Include(x => x.Contents).Where(x => x.Id == id).Select(x => x.Contents);
+
             if (location == null)
             {
                 return NotFound();

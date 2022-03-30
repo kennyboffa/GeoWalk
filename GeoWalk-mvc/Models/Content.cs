@@ -3,18 +3,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace GeoWalk_mvc.Models
 {
-    public class Content
-    {
+    //public class Content
+    //{
 
-        public int Id { get; set; }
-        [Required]
-        public string Title { get; set; }
-        public string Info { get; set; }
-        public string Question { get; set; }
-        public string Answers { get; set; }
-        public virtual Location Location { get; set; }
+    //    public int Id { get; set; }
+    //    [Required]
+    //    public string Title { get; set; }
+    //    public string Info { get; set; }
+    //    public string Question { get; set; }
+    //    public string Answers { get; set; }
+    //    public virtual Location Location { get; set; }
 
-    }
+    //}
 
 
     //EF CORE - how to map abstract classes into one table
@@ -29,8 +29,6 @@ namespace GeoWalk_mvc.Models
         public int Id { get; set; }
         public string Title { get; set; }
         public virtual Location Location { get; set; }
-
-
         public abstract string Type { get; }
     }
 
@@ -49,14 +47,16 @@ namespace GeoWalk_mvc.Models
         public IEnumerable<Answer> Answers { get; set; }
         public override string Type { get; } = "questionanswer";
     }
-    public class NyContent : ContentBase
-    {
-        public string Info { get; set; }
-        public override string Type { get; } = "ny";
-    }
+    //public class NyContent : ContentBase
+    //{
+    //    public string Info { get; set; }
+    //    public override string Type { get; } = "ny";
+    //}
 
     public class Answer
     {
+        public int Id { get; set; }
+        public string AnswerText { get; set; }
         public int Points { get; set; } = 0;
     }
 

@@ -35,28 +35,44 @@ namespace GeoWalk_mvc.Controllers
         }
 
         [HttpPost("content")]
-        public async Task<IActionResult> CreateInfo([FromBody] ContentInputModel inputModel)
+        public async Task<IActionResult> CreateContent([FromBody] ContentInputModel inputModel)
         {
 
-            var item = await _context.Contents.FirstOrDefaultAsync(x => x.Title == inputModel.title);
+            //var item = await _context.Contents.FirstOrDefaultAsync(x => x.Title == inputModel.title);
             var location = await _context.Locations.FindAsync(inputModel.locationId);
 
-            if (item == null || location != null)
+            if (location != null)
             {
-                var content = new Content();
+                if (inputModel.type == "info")
+                {
+                    var content = new InfoContent();
+
+                    content.Title = inputModel.title;
+                    content.Info = inputModel.info;
+                    content.Location = location;
+
+                    _context.Contents.Add(content);
+
+                    await _context.SaveChangesAsync();
+
+                }
+                else if (inputModel.type == "questionanswer")
+                { 
+                var content = new QuestionAnswer();
 
                 content.Title = inputModel.title;
-                content.Info = inputModel.info;
                 content.Question = inputModel.question;
                 content.Answers = inputModel.answers;
                 content.Location = location;
 
-                _context.Contents.Add(content);
+                    _context.Contents.Add(content);
 
+                    await _context.SaveChangesAsync();
+                }
 
-                await _context.SaveChangesAsync();
 
             }
+ 
             else
             {
                 return BadRequest("Something went wrong!");
@@ -82,34 +98,91 @@ namespace GeoWalk_mvc.Controllers
 
             return Ok(content);
         }
+        /// <summary>
+        /// Get one Walk by id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("content/{id}/info")]
+        public async Task<IActionResult> GetInfoContent(int id)
+        {
+            var content = await _context.Contents.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (content is null)
+            {
+                return NotFound();
+            }
+
+
+            return Ok(content);
+        }
+
+        /// <summary>
+        /// Get one Walk by id
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("content/{id}/questionanswer")]
+        public async Task<IActionResult> GetQuestionContent(int id)
+        {
+            var content = await _context.Contents.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (content is null)
+            {
+                return NotFound();
+            }
+
+
+            return Ok(content);
+        }
+
 
         [HttpPut("content/{id}")]
         public async Task<IActionResult> UpdateInfo([FromRoute]int id, [FromBody] ContentInputModel inputModel)
         {
             //var content = _context.Contents.Where(x => x.Id == id);
-            var content = await _context.Contents.FindAsync(id);
+            var item = await _context.Contents.FindAsync(id);
            
-            if (content == null)
+            if (item == null)
             {
                 return NotFound();
             }
-            content.Title = inputModel.title;
-            content.Info = inputModel.info;
-            content.Question = inputModel.question;
-            content.Answers = inputModel.answers;
+            if (item.Type == "info")
+            {
+                var content = new InfoContent();
+
+                content.Title = inputModel.title;
+                content.Info = inputModel.info;
+
+                _context.Contents.Add(content);
+
+                await _context.SaveChangesAsync();
+
+            }
+            else if (item.Type == "questionanswer")
+            {
+                var content = new QuestionAnswer();
+
+                content.Title = inputModel.title;
+                content.Question = inputModel.question;
+                content.Answers = inputModel.answers;
+
+                _context.Contents.Add(content);
+
+                await _context.SaveChangesAsync();
+            }
 
             await _context.SaveChangesAsync();
 
-            return Ok(content);
+            return Ok(item);
         }
 
         public class ContentInputModel
         {
             public int? locationId { get; set; }
+            public string type { get; set; }
             public string title { get; set; }
             public string info { get; set; }
             public string question { get; set; }
-            public string answers { get; set; }
+            public IEnumerable<Answer> answers { get; set; }
         }
     }
 }

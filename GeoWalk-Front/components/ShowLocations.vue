@@ -53,10 +53,7 @@
             </v-btn>
           </div>
         </v-expansion-panel-header>
-        <v-expansion-panel-content
-          v-for="(content, key) in contents"
-          :key="key"
-        >
+        <v-expansion-panel-content>
           <v-simple-table class="location-content">
             <thead>
               <tr>
@@ -76,27 +73,20 @@
             </thead>
 
             <tbody>
-              <td class="location-content-items">
-                {{ content.title }}
-              </td>
-              <td class="location-content-items">
-                {{ content.info }}
-              </td>
-              <td class="location-content-items">
-                {{ content.question }}
-              </td>
-              <td class="location-content-items">
-                {{ content.correctAnswer }}
-              </td>
-              <td class="location-content-items">
-                {{ content.answerTwo }}
-              </td>
-              <td class="location-content-items">
-                {{ content.answerThree }}
-              </td>
-            </tbody>
-            <tr>
-              <td>
+              <tr
+                v-for="(content,key) in contents"
+                :key="key"
+              >
+                <td class="location-content-items">
+                  {{ content }}
+                </td>
+                <td class="location-content-items">
+                  {{ }}
+                </td>
+                <td class="location-content-items">
+                  {{ }}
+                </td>
+
                 <v-btn
                   class="
               warning ep-btn"
@@ -104,14 +94,14 @@
                 >
                   Edit
                 </v-btn>
-              </td>
 
-              <td>
-                <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
-                  Remove
-                </v-btn>
-              </td>
-            </tr>
+                <td>
+                  <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
+                    Remove
+                  </v-btn>
+                </td>
+              </tr>
+            </tbody>
           </v-simple-table>
         </v-expansion-panel-content>
         <v-btn class="green" @click.stop="AddContentClick(item.id)">
@@ -151,7 +141,9 @@ export default {
   },
   data () {
     return {
-      contents: [],
+      locationContents: undefined,
+      contents: undefined,
+      contentId: null,
       dialog: false,
       locationRemoved: null,
       walk: undefined,
@@ -193,10 +185,15 @@ export default {
     addLocation (location) {
       this.locations.push(location)
     },
-    onRowClick (locationId) {
+    async onRowClick (locationId) {
       // this.$router.push({ path: `/location/${locationId}` })
       // this.dialog = true
-      this.contents = this.GetContent(locationId)
+      await this.GetLocationContent(locationId)
+
+      this.locationContents.forEach((element) => {
+        this.GetContent(element.id, element.type)
+      })
+      console.log(this.contents)
       // console.log(this.contents)
     },
     goBack () {
@@ -205,11 +202,20 @@ export default {
     onFeatureClick (clickedFeature) {
       this.$router.push({ path: `/location/${clickedFeature}` })
     },
-    GetContent (locationId) {
-      this.$axios
+    async GetLocationContent (locationId) {
+      await this.$axios
         .get(`/location/${locationId}`)
         .then((res) => {
-          this.contents = res.data.contents
+          this.locationContents = res.data.contents
+        })
+      console.log(this.locationContents)
+    },
+    async GetContent (id, type) {
+      await this.$axios
+        .get(`/content/${id}/${type}`)
+        .then((res) => {
+          this.contents = res.data
+          // console.log(res.data)
         })
     },
     EditContent (id) {
