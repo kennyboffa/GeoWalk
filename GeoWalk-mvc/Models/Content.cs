@@ -30,21 +30,26 @@ namespace GeoWalk_mvc.Models
         public string Title { get; set; }
         public virtual Location Location { get; set; }
         public abstract string Type { get; }
+
+        public abstract string Summarize { get; }
     }
 
     public class InfoContent : ContentBase
     {
         public string Info { get; set; }
         public override string Type { get; } = "info";
-    }
+
+            public override string Summarize => Info;
+        }
     public class QuestionAnswer : ContentBase
     {
         public string Question { get; set; }
-        public int ApprovedPoints { get; set; } = 1;
+            public override string Summarize => Question;
+            public int ApprovedPoints { get; set; } = 1;
 
         public int AnswersToShow { get; set; } = 3;
 
-        public IEnumerable<Answer> Answers { get; set; }
+        public virtual IEnumerable<Answer> Answers { get; set; }
         public override string Type { get; } = "questionanswer";
     }
     //public class NyContent : ContentBase
@@ -58,6 +63,7 @@ namespace GeoWalk_mvc.Models
         public int Id { get; set; }
         public string AnswerText { get; set; }
         public int Points { get; set; } = 0;
+        public virtual QuestionAnswer QuestionAnswer { get; set; }
     }
 
 

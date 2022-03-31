@@ -17,6 +17,7 @@ namespace MyApp
      
                 var builder = WebApplication.CreateBuilder(args);
 
+
             builder.Services.AddDbContext<GeoWalk_mvc.Models.MyDbContext>(o =>
             {
                 o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

@@ -51,24 +51,49 @@
               label="Question"
               value=":this.question"
             />
-            <v-text-field
+            <div
+              v-for="(answer,index) in answers"
+              :key="index"
+            >
+              <v-text-field
+                v-if="radioButtonSelected === radio2"
+                v-model="answer.answerText"
+                label="Answer"
+              />
+              <v-text-field
+                v-if="radioButtonSelected === radio2"
+                v-model="answer.points"
+                class="points-field"
+                label="Points"
+                type="number"
+              />
+              <!-- <v-text-field
               v-if="radioButtonSelected === radio2"
-              v-model="correctAnswer"
-              label="The Correct Answer"
-              value=":this.correctAnswer"
-            />
-            <v-text-field
-              v-if="radioButtonSelected === radio2"
-              v-model="answerTwo"
+              v-model="answers.two"
               label="Answer"
-              value=":this.answertwo"
+              value=":this.answers"
             />
             <v-text-field
               v-if="radioButtonSelected === radio2"
-              v-model="answerThree"
+              v-model="answers.three"
               label="Answer"
-              value=":this.answerthree"
-            />
+              value=":this.answers"
+            /> -->
+              <!-- <div
+              v-for="(answer,index) in answers"
+              :key="index"
+            >
+              <v-text-field
+                v-if="radioButtonSelected === radio2"
+                v-model="answer.index"
+                label="Answer"
+                value=":this.answers"
+              /> -->
+
+              <v-btn class="red" @click="DeleteRow(index)">
+                Delete Row
+              </v-btn>
+            </div>
           </v-col>
           <v-col
             cols="12"
@@ -76,6 +101,9 @@
             md="4"
           />
         </v-row>
+        <v-btn v-if="radioButtonSelected === radio2" @click="AddAnswerRow">
+          Add Another Answer
+        </v-btn>
       </v-container>
       <small>*indicates required field</small>
     </v-card-text>
@@ -91,7 +119,7 @@
       <v-btn
         color="blue darken-1"
         text
-        @click="AddContent(contentLocationId, type, title, info, question, correctAnswer, answerTwo, answerThree)"
+        @click="AddContent(contentLocationId, type, title, info, question, answers)"
       >
         Save
       </v-btn>
@@ -113,10 +141,10 @@ export default {
       radioButtonSelected: 'Info',
       info: '',
       question: '',
-      correctAnswer: '',
-      answerTwo: '',
-      answerThree: '',
-      type: 'info'
+      type: 'info',
+      answers: [{
+
+      }]
     }
   },
 
@@ -129,9 +157,7 @@ export default {
         title: this.title,
         info: this.info,
         question: this.question,
-        correctAnswer: this.correctAnswer,
-        answerTwo: this.answerTwo,
-        answerThree: this.answerThree
+        answers: this.answers
 
       }
       if (this.title !== undefined && this.title !== '') {
@@ -139,14 +165,21 @@ export default {
           .post('/content/', newContent)
         this.dialog = false
         this.$emit('dialog-close')
+        this.$emit('content-added')
         this.info = ''
         this.title = undefined
         this.question = ''
-        this.correctAnswer = ''
-        this.answerTwo = ''
-        this.answerThree = ''
+        this.answers = []
       }
+    },
+    AddAnswerRow () {
+      this.answers.push({
+      })
+    },
+    DeleteRow (index) {
+      this.answers.splice(index, 1)
     }
+
     // GetContent () {
     //   this.$axios
     //     .get(`/location/${this.contentLocationId}`)

@@ -36,17 +36,7 @@
                 <div v-if="title === undefined || title === '' " class="dialog-required-message">
                   Title has to be set
                 </div>
-                <!-- <v-text-field
-                  v-model="latitude"
-                  label="Location Latitude"
-                  value=":this.latitude"
-                  required
-                />
-                <v-text-field
-                  v-model="longitude"
-                  label="Location Longitude"
-                  value=":this.longitude"
-                  required
+
                 /> -->
               </v-col>
               <v-col

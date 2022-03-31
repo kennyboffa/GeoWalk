@@ -8,6 +8,7 @@
       <ContentDialog
         :content-location-id="contentLocationId"
         @dialog-close="dialog = false"
+        @content-added="GetLocationContent(contentLocationId)"
       />
     </v-dialog>
 
@@ -61,14 +62,13 @@
                   Title
                 </th>
                 <th class="text-left">
-                  Info
+                  Type
                 </th>
                 <th class="text-left">
-                  Question
+                  Summary
                 </th>
-                <th class="text-left">
-                  Answers
-                </th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
               </tr>
             </thead>
 
@@ -78,23 +78,23 @@
                 :key="key"
               >
                 <td class="location-content-items">
-                  {{ content }}
+                  {{ content.title }}
                 </td>
                 <td class="location-content-items">
-                  {{ }}
+                  {{ content.type }}
                 </td>
                 <td class="location-content-items">
-                  {{ }}
+                  {{ content.summarize }}
                 </td>
-
-                <v-btn
-                  class="
+                <td>
+                  <v-btn
+                    class="
               warning ep-btn"
-                  @click.stop="EditContent(content.id)"
-                >
-                  Edit
-                </v-btn>
-
+                    @click.stop="EditContent(content.id)"
+                  >
+                    Edit
+                  </v-btn>
+                </td>
                 <td>
                   <v-btn class="red ep-btn" @click.stop="RemoveContent(content.id, item.id)">
                     Remove
@@ -142,7 +142,7 @@ export default {
   data () {
     return {
       locationContents: undefined,
-      contents: undefined,
+      contents: [],
       contentId: null,
       dialog: false,
       locationRemoved: null,
@@ -185,16 +185,10 @@ export default {
     addLocation (location) {
       this.locations.push(location)
     },
-    async onRowClick (locationId) {
+    onRowClick (locationId) {
       // this.$router.push({ path: `/location/${locationId}` })
-      // this.dialog = true
-      await this.GetLocationContent(locationId)
-
-      this.locationContents.forEach((element) => {
-        this.GetContent(element.id, element.type)
-      })
-      console.log(this.contents)
-      // console.log(this.contents)
+      this.contents = []
+      this.GetLocationContent(locationId)
     },
     goBack () {
       this.$router.go(-1)
@@ -202,20 +196,11 @@ export default {
     onFeatureClick (clickedFeature) {
       this.$router.push({ path: `/location/${clickedFeature}` })
     },
-    async GetLocationContent (locationId) {
-      await this.$axios
+    GetLocationContent (locationId) {
+      this.$axios
         .get(`/location/${locationId}`)
         .then((res) => {
-          this.locationContents = res.data.contents
-        })
-      console.log(this.locationContents)
-    },
-    async GetContent (id, type) {
-      await this.$axios
-        .get(`/content/${id}/${type}`)
-        .then((res) => {
-          this.contents = res.data
-          // console.log(res.data)
+          this.contents = res.data.contents
         })
     },
     EditContent (id) {
@@ -229,8 +214,8 @@ export default {
       this.$axios
         .delete(`/content/${contentId}`)
         .then((res) => {
-          this.content = res.data
-          this.GetContent(locationId)
+          // this.contents = res.data
+          this.GetLocationContent(locationId)
         })
     }
   }

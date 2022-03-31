@@ -12,6 +12,7 @@ namespace GeoWalk_mvc.Models
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Answer> Answers { get; set; }
         public DbSet<ContentBase> Contents { get; set; }
         public DbSet<Result> Results { get; set; }
         public DbSet<Score> Scores { get; set; }
@@ -22,7 +23,9 @@ namespace GeoWalk_mvc.Models
         {
             builder.Entity<InfoContent>().ToTable("Contents");
             builder.Entity<QuestionAnswer>().ToTable("Contents");
+      
             base.OnModelCreating(builder);
+                
         }
     }
 }

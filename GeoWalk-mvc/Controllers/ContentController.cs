@@ -22,6 +22,7 @@ namespace GeoWalk_mvc.Controllers
         public async Task<IActionResult> DeleteContent(int id)
         {
             var content = await _context.Contents.FindAsync(id);
+ 
 
             if (content == null)
             {
@@ -29,6 +30,7 @@ namespace GeoWalk_mvc.Controllers
             }
 
             _context.Contents.Remove(content);
+            //_context.Answers.Remove()
             await _context.SaveChangesAsync();
 
             return Ok("Content was deleted!");
@@ -65,6 +67,7 @@ namespace GeoWalk_mvc.Controllers
                 content.Answers = inputModel.answers;
                 content.Location = location;
 
+
                     _context.Contents.Add(content);
 
                     await _context.SaveChangesAsync();
@@ -81,6 +84,37 @@ namespace GeoWalk_mvc.Controllers
             return Ok("Content saved!");
 
         }
+        //[HttpPost("content")]
+        //public async Task<IActionResult> CreateAnswer([FromBody] ContentInputModel inputModel)
+        //{
+
+        //    //var item = await _context.Contents.FirstOrDefaultAsync(x => x.Title == inputModel.title);
+        //    var location = await _context.Locations.FindAsync(inputModel.locationId);
+
+        //    if (location != null)
+        //    {
+        //     if (inputModel.type == "questionanswer")
+        //        {
+        //            var content = new QuestionAnswer();
+        //            content.Answers = inputModel.answers;
+  
+
+        //            _context.Answers.Add(content.Answers);
+
+        //            await _context.SaveChangesAsync();
+        //        }
+
+
+        //    }
+
+        //    else
+        //    {
+        //        return BadRequest("Something went wrong!");
+        //    }
+
+        //    return Ok("Content saved!");
+
+        //}
         /// <summary>
         /// Get one Walk by id
         /// </summary>

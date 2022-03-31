@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeoWalk_mvc.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20220329113202_init")]
-    partial class init
+    [Migration("20220331093808_new-content")]
+    partial class newcontent
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,7 +46,7 @@ namespace GeoWalk_mvc.Migrations
 
                     b.HasIndex("QuestionAnswerId");
 
-                    b.ToTable("Answer");
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("GeoWalk_mvc.Models.ContentBase", b =>

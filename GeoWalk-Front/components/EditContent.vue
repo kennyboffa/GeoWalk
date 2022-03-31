@@ -18,6 +18,7 @@
 
               <v-col cols="12" md="4">
                 <v-text-field
+                  v-if="content.info"
                   v-model="content.info"
                   label="Info"
                   required
@@ -25,31 +26,24 @@
               </v-col>
               <v-col cols="12" md="4">
                 <v-text-field
+                  v-if="content.question"
                   v-model="content.question"
                   label="Question"
                   required
                 />
               </v-col>
               <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="content.correctAnswer"
-                  label="Correct Answer"
-                  required
-                />
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="content.answerTwo"
-                  label="Answer"
-                  required
-                />
-              </v-col>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="content.answerThree"
-                  label="Answer"
-                  required
-                />
+                <div v-if="content.answers">
+                  <v-text-field
+
+                    v-for="(answer,index) in answers"
+                    :key="index"
+                    v-model="content.answers"
+                    key:index
+                    label="Answers"
+                    required
+                  />
+                </div>
               </v-col>
             </v-row>
           </v-container>
@@ -69,13 +63,16 @@
 export default {
   props: [
     'selectedContentId'
+
   ],
   data () {
     return {
       content: {
         content: this.content,
         info: this.info,
-        title: this.title
+        title: this.title,
+        question: this.question,
+        answers: this.answers
       }
     }
   },
@@ -86,6 +83,13 @@ export default {
     GetContent () {
       this.$axios
         .get(`/content/${this.selectedContentId}`)
+        .then((res) => {
+          this.GetContentByType(this.selectedContentId, res.data.type)
+        })
+    },
+
+    GetContentByType (id, type) {
+      this.$axios.get(`/content/${id}/${type}`)
         .then((res) => {
           this.content = res.data
           console.log(this.content)

@@ -3,6 +3,7 @@ using GeoWalk_mvc.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GeoWalk_mvc.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    partial class MyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220331122221_changed-content")]
+    partial class changedcontent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,12 +38,12 @@ namespace GeoWalk_mvc.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
-                    b.Property<int>("QuestionAnswerId")
+                    b.Property<int>("questionAnswerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QuestionAnswerId");
+                    b.HasIndex("questionAnswerId");
 
                     b.ToTable("Answers");
                 });
@@ -221,13 +223,13 @@ namespace GeoWalk_mvc.Migrations
 
             modelBuilder.Entity("GeoWalk_mvc.Models.Answer", b =>
                 {
-                    b.HasOne("GeoWalk_mvc.Models.QuestionAnswer", "QuestionAnswer")
+                    b.HasOne("GeoWalk_mvc.Models.QuestionAnswer", "questionAnswer")
                         .WithMany("Answers")
-                        .HasForeignKey("QuestionAnswerId")
+                        .HasForeignKey("questionAnswerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("QuestionAnswer");
+                    b.Navigation("questionAnswer");
                 });
 
             modelBuilder.Entity("GeoWalk_mvc.Models.ContentBase", b =>
