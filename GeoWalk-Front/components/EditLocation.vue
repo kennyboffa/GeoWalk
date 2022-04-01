@@ -6,7 +6,7 @@
         ID: {{ location.id }} <br><br>
         Coordinates: {{ location.coordinates }}<br><br>
 
-        <v-form @submit.prevent="onSubmit()">
+        <v-form @submit.prevent="onSubmit(contentLocationId, type, title, info, question, answers)">
           <v-container>
             <v-row>
               <v-col cols="12" md="4">
