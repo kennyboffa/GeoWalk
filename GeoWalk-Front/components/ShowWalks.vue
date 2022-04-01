@@ -17,6 +17,9 @@
             <th class="text-left">
               Walk Id
             </th>
+            <th class="text-left">
+              Nr of Locations
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -25,6 +28,7 @@
             <td>{{ value.walkName }} </td>
             <td>{{ 'length' }}</td>
             <td>{{ value.id }}</td>
+            <td>{{ value.locations.length }}</td>
             <td>
               <v-btn class="warning" @click.stop="EditWalk(value.id)">
                 Edit
@@ -47,7 +51,8 @@
 export default {
   data () {
     return {
-      walks: null
+      walks: null,
+      locations: null
     }
   },
   created () {

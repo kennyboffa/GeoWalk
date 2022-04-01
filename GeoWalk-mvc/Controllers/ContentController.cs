@@ -84,37 +84,7 @@ namespace GeoWalk_mvc.Controllers
             return Ok("Content saved!");
 
         }
-        //[HttpPost("content")]
-        //public async Task<IActionResult> CreateAnswer([FromBody] ContentInputModel inputModel)
-        //{
-
-        //    //var item = await _context.Contents.FirstOrDefaultAsync(x => x.Title == inputModel.title);
-        //    var location = await _context.Locations.FindAsync(inputModel.locationId);
-
-        //    if (location != null)
-        //    {
-        //     if (inputModel.type == "questionanswer")
-        //        {
-        //            var content = new QuestionAnswer();
-        //            content.Answers = inputModel.answers;
-  
-
-        //            _context.Answers.Add(content.Answers);
-
-        //            await _context.SaveChangesAsync();
-        //        }
-
-
-        //    }
-
-        //    else
-        //    {
-        //        return BadRequest("Something went wrong!");
-        //    }
-
-        //    return Ok("Content saved!");
-
-        //}
+        
         /// <summary>
         /// Get one Walk by id
         /// </summary>
@@ -157,20 +127,23 @@ namespace GeoWalk_mvc.Controllers
         [HttpGet("content/{id}/questionanswer")]
         public async Task<IActionResult> GetQuestionContent(int id)
         {
-            var content = await _context.Contents.FirstOrDefaultAsync(x => x.Id == id);
+            var content = await _context.Answers
+                .Where(x => x.QuestionAnswer.Id == id).ToListAsync();
+           
+            //var answers = await _context.Answers.FirstOrDefaultAsync(x => x.QuestionAnswer.Id == id);
 
             if (content is null)
             {
                 return NotFound();
             }
-
+            
 
             return Ok(content);
         }
 
 
         [HttpPut("content/{id}")]
-        public async Task<IActionResult> UpdateInfo([FromRoute]int id, [FromBody] ContentInputModel inputModel)
+        public async Task<IActionResult> Update([FromRoute]int id, [FromBody] ContentInputModel inputModel)
         {
             //var content = _context.Contents.Where(x => x.Id == id);
             var item = await _context.Contents.FindAsync(id);
@@ -183,26 +156,23 @@ namespace GeoWalk_mvc.Controllers
             {
                 var content = new InfoContent();
 
+                content = (InfoContent)await _context.Contents.FindAsync(id);
+
                 content.Title = inputModel.title;
                 content.Info = inputModel.info;
-
-                _context.Contents.Add(content);
-
-                await _context.SaveChangesAsync();
-
             }
             else if (item.Type == "questionanswer")
             {
                 var content = new QuestionAnswer();
 
+                content = (QuestionAnswer)await _context.Contents.FindAsync(id);
+
+
                 content.Title = inputModel.title;
                 content.Question = inputModel.question;
                 content.Answers = inputModel.answers;
-
-                _context.Contents.Add(content);
-
-                await _context.SaveChangesAsync();
             }
+
 
             await _context.SaveChangesAsync();
 

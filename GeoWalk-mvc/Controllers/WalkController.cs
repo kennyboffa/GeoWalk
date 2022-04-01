@@ -72,7 +72,7 @@ namespace GeoWalk_mvc.Controllers
         [HttpGet("walk/")]
         public async Task<IActionResult> GetAllWalks()
         {
-            var listWalks = await _context.Walks.ToListAsync();
+            var listWalks = await _context.Walks.Include(x => x.Locations).ToListAsync();
 
             //List<Walk> allWalks = new List<Walk>();
             //allWalks = await _context.Walks.FindAsync();

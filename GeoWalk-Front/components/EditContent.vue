@@ -10,7 +10,7 @@
             <v-row>
               <v-col cols="12" md="4">
                 <v-text-field
-                  v-model="content.title"
+                  v-model="baseContent.title"
                   label="Title"
                   required
                 />
@@ -26,22 +26,28 @@
               </v-col>
               <v-col cols="12" md="4">
                 <v-text-field
-                  v-if="content.question"
-                  v-model="content.question"
+                  v-if="!content.info"
+                  v-model="baseContent.question"
                   label="Question"
                   required
                 />
               </v-col>
               <v-col cols="12" md="4">
-                <div v-if="content.answers">
+                <div
+                  v-for="(item,index) in content"
+                  :key="index"
+                >
                   <v-text-field
-
-                    v-for="(answer,index) in answers"
-                    :key="index"
-                    v-model="content.answers"
-                    key:index
-                    label="Answers"
-                    required
+                    v-if="!content.info"
+                    v-model="item.answerText"
+                    label="Answer"
+                  />
+                  <v-text-field
+                    v-if="!content.info"
+                    v-model="item.points"
+                    class="points-field"
+                    label="Points"
+                    type="number"
                   />
                 </div>
               </v-col>
@@ -67,13 +73,13 @@ export default {
   ],
   data () {
     return {
-      content: {
-        content: this.content,
+      baseContent: [{
+
+      }],
+      content: [{
         info: this.info,
-        title: this.title,
-        question: this.question,
         answers: this.answers
-      }
+      }]
     }
   },
   created () {
@@ -84,6 +90,8 @@ export default {
       this.$axios
         .get(`/content/${this.selectedContentId}`)
         .then((res) => {
+          this.baseContent = res.data
+
           this.GetContentByType(this.selectedContentId, res.data.type)
         })
     },
@@ -92,12 +100,19 @@ export default {
       this.$axios.get(`/content/${id}/${type}`)
         .then((res) => {
           this.content = res.data
-          console.log(this.content)
         })
     },
     onSubmit () {
+      const newContent = {
+        title: this.baseContent.title,
+        info: this.content.info,
+        question: this.baseContent.question,
+        answers: this.content
+
+      }
+
       this.$axios
-        .put(`/content/${this.selectedContentId}`, this.content)
+        .put(`/content/${this.selectedContentId}`, newContent)
         .then((res) => {
           this.$router.go(-1)
         })

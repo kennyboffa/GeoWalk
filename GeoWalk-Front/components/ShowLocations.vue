@@ -16,7 +16,7 @@
     <v-list>
       <v-list-item v-if="walk">
         <v-list-item-content>
-          <td>ID: {{ walk.id }} </td>
+          <td>Walk ID: {{ walk.id }} </td>
         </v-list-item-content>
         <v-list-item-content>
           <td>Walk Name: {{ walk.walkName }} </td>
@@ -39,12 +39,12 @@
           <div class="main-info">
             Location ID: {{ item.id }}
           </div>
-          <div class="main-info">
+          <!-- <div class="main-info">
             Longitude: {{ item.longitude }}
           </div>
           <div class="main-info">
             Latitude: {{ item.latitude }}
-          </div>
+          </div> -->
           <div class="btn-container">
             <v-btn class="warning ep-btn" @click.stop="EditLocation(item.id)">
               Edit

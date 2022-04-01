@@ -119,7 +119,7 @@
       <v-btn
         color="blue darken-1"
         text
-        @click="AddContent(contentLocationId, type, title, info, question, answers)"
+        @click="AddContent()"
       >
         Save
       </v-btn>

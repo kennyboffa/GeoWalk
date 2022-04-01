@@ -45,7 +45,7 @@ namespace GeoWalk_mvc.Models
     {
         public string Question { get; set; }
             public override string Summarize => Question;
-            public int ApprovedPoints { get; set; } = 1;
+            //public int ApprovedPoints { get; set; } = 1;
 
         public int AnswersToShow { get; set; } = 3;
 
