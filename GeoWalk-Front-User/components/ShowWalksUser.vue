@@ -15,16 +15,20 @@
               Length in Km
             </th>
             <th class="text-left">
-              Nr of Questions/Info
+              Start Location
+            </th>
+            <th class="text-left">
+              Nr of Locations
             </th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(value, key) in walks" :key="key" @click="onRowClick(value.id)">
-            <td>{{ key }} </td>
+            <td>{{ value.id }} </td>
             <td>{{ value.walkName }} </td>
             <td>{{ 'length' }}</td>
-            <td>{{ locations }}</td>
+            <td>{{ value.locations[0].title }}</td>
+            <td>{{ value.locations.length }}</td>
           </tr>
         </tbody>
       </template>
@@ -33,6 +37,9 @@
       <ClientOnly>
         <MapContainerUser
           ref="mapContainer"
+          :locations="locations"
+          :walks="walks"
+          :set-walk="setWalk"
         />
       </ClientOnly>
     </div>
@@ -50,13 +57,12 @@ export default {
   data () {
     return {
       walks: [],
-      locations: undefined
+      locations: [],
+      setWalk: []
     }
   },
   created () {
     this.GetWalks()
-  },
-  mounted () {
   },
   methods: {
     GetWalks () {
@@ -64,16 +70,17 @@ export default {
         .get('/walk')
         .then((res) => {
           this.walks = res.data
+          this.walks.forEach((element) => {
+            this.locations.push(element.locations[0])
+            // this.setWalk.push(element.id)
+            // console.log(element.id)
+          })
         })
     },
     GetWalk (id) {
-      console.log(id)
       this.$axios
         .get(`/walk/${id}`)
         .then((res) => {
-          this.locations = res.data.locations
-          console.log(this.locations)
-          // this.$emit('walkId')
         })
     },
     EditWalk (id) {

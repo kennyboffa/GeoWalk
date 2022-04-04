@@ -18,7 +18,6 @@ export default {
         // this.setLoadingState()
         this.address = await locationService.currentAddress()
         this.loading = false
-        console.log(this.address)
       } catch (error) {
         this.setErrorState(error)
         console.log(error)

@@ -86,6 +86,8 @@ namespace GeoWalk_mvc.Controllers
             return Ok(listWalks);
         }
 
+
+
         /// <summary>
         /// Get all Walks
         /// </summary>

@@ -36,8 +36,6 @@
                 <div v-if="title === undefined || title === '' " class="dialog-required-message">
                   Title has to be set
                 </div>
-
-                /> -->
               </v-col>
               <v-col
                 cols="12"

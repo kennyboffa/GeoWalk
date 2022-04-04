@@ -57,7 +57,7 @@ export default (context, inject) => {
     options = {
       view: new ol.View({
         center: options.centerView ?? ol.format.fromLonLat([16, 15]),
-        zoom: 6
+        zoom: options.zoom ?? 7
       }),
       ...options
     }
@@ -65,11 +65,11 @@ export default (context, inject) => {
 
     return {
       map,
-      addLayer: (layerId, typeOfLayer, x, y) => {
+      addLayer: (layerId, typeOfLayer, setWalkId, x, y) => {
         const feature = new ol.format.GeoJSON().readFeature(
           {
             type: 'Feature',
-            properties: { layerId, typeOfLayer },
+            properties: { layerId, typeOfLayer, setWalkId },
             style: styleFunction,
             geometry: {
               type: 'MultiPoint',
@@ -83,6 +83,7 @@ export default (context, inject) => {
         const vectorLayer = new ol.layer.VectorLayer({
           id: layerId,
           type: typeOfLayer,
+          walkId: setWalkId,
 
           style: styleFunction,
           source: new ol.source.VectorSource({
@@ -96,21 +97,14 @@ export default (context, inject) => {
       addPosition (layer, title, content) {
         layer.title = title
         layer.content = content
-
-        // layor.addFeature(feature)
-
-        // layer.on("pointermove")
-        // feature.on("hover", () => {})
       },
       removeLayerFromMap (layerId) {
         const layer = map.getLayers().getArray().find(x => x.get('id') === layerId)
         map.removeLayer(layer)
-        console.log(layer.title)
         const layerLabel = map.getLayers().getArray().find(x => x.get('id') === `${layer.title}_label`)
         map.removeLayer(layerLabel)
       },
       createLabel (layer, lon, lat) {
-        console.log(layer.title)
         layer.title = `${layer.title}`
         const labelFeature = new Feature({
           geometry: new Circle(([lon, lat]), 0)
@@ -172,17 +166,7 @@ export default (context, inject) => {
           }
           pointerOverFeature = featureOver
         })
-        // this.zoomValue = map.getView().values_.zoom
-        // map.getView().on('change:resolution', (e) => {
-        //   const newZoomValue = e.target.values_.zoom
-        //   if (newZoomValue > zoomValue) {
-        //     console.log('smaller')
-        //     this.zoomValue = newZoomValue
-        //   } else {
-        //     console.log('larger')
-        //     this.zoomValue = newZoomValue
-        //   }
-        // })
+
         const labelLayer = new ol.layer.VectorLayer({
           name: layer.title,
           source: new ol.source.VectorSource({
