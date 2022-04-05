@@ -3,6 +3,7 @@ import * as locationService from '../services/location'
 export default {
   data () {
     return {
+      manualLocation: {},
       address: {},
       error: null,
       geolocationSupported: '',
@@ -13,14 +14,24 @@ export default {
     this.geolocationSupported = 'geolocation' in window.navigator
   },
   methods: {
-    async fetchAddress () {
-      try {
-        // this.setLoadingState()
-        this.address = await locationService.currentAddress()
+    async fetchAddress (manualLocation) {
+      if (!manualLocation) {
+        try {
+          // this.setLoadingState()
+          this.address = await locationService.currentAddress()
+          this.loading = false
+          this.$cookiz.set('userPosition', this.address)
+          console.log('inte manual')
+        } catch (error) {
+          this.setErrorState(error)
+          console.log(error)
+        }
+      } else {
+        this.address = await locationService.manualAddress(manualLocation)
         this.loading = false
-      } catch (error) {
-        this.setErrorState(error)
-        console.log(error)
+        this.$cookiz.set('userPosition', this.address)
+        console.log('manual')
+        console.log(this.address)
       }
     },
     setErrorState () { // lägg till error
@@ -32,8 +43,9 @@ export default {
     return this.$scopedSlots.default({
       address: this.address,
       error: this.error,
-      gelocationSupported: this.geoLocationSupported,
+      geolocationSupported: this.geoLocationSupported,
       fetchAddress: this.fetchAddress
+
     })
   }
 }

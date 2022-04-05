@@ -37,6 +37,7 @@
       <ClientOnly>
         <MapContainerUser
           ref="mapContainer"
+          :render="render"
           :locations="locations"
           :walks="walks"
           :set-walk="setWalk"
@@ -54,6 +55,10 @@ export default {
   components: {
     MapContainerUser
   },
+
+  props: {
+    render: { type: Boolean, default: false }
+  },
   data () {
     return {
       walks: [],
@@ -65,6 +70,7 @@ export default {
     this.GetWalks()
   },
   methods: {
+
     GetWalks () {
       this.$axios
         .get('/walk')

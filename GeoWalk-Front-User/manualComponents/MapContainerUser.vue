@@ -23,6 +23,7 @@
 export default {
   name: 'Map',
   props: {
+    render: { type: Boolean, default: false },
     locationRemoved: { type: Number, default: null },
     locations: { type: Array, default: () => [] },
     setZoom: { type: Number, default: null },
@@ -36,7 +37,8 @@ export default {
 
         }
       ],
-      userPosition: [],
+      centerView: undefined,
+      userPosition: this.$cookiz.get('userPosition'),
       contentLocationId: null,
       showLayers: [],
       aLayer: '',
@@ -50,11 +52,21 @@ export default {
       ]
     }
   },
+  watch: {
+    render (oldValue, newValue) {
+      if (this.render === true) {
+        this.reCenter()
+      }
+    }
+  },
   mounted () {
     this.activate()
   },
   methods: {
-
+    reCenter () {
+      this.centerView = this.userPosition.coordinates
+      console.log(this.centerView)
+    },
     activate () {
       setTimeout(() => {
         this.renderChart(this.locations)
@@ -62,18 +74,21 @@ export default {
     },
 
     renderChart (locations) {
-      // const centerView = undefined
-      const centerView = this.$ol.format.fromLonLat(locations && locations.length > 0
-        ? [(locations[0].longitude),
-            (locations[0].latitude)]
-        : [12, 54])
+      // const centerView = this.$ol.format.fromLonLat(locations && locations.length > 0
+      //   ? [(locations[0].longitude),
+      //       (locations[0].latitude)]
+      //   : [12, 54])
 
-      // if (this.$ol.format.fromLonLat(locations && locations.length > 0)
-      // {
-      //   centerView = [(locations[0].longitude),
-      //      (locations[0].latitude)]
-      // }
-      // else
+      if (this.userPosition.coordinates && this.userPosition.coordinates.length > 0) {
+        this.centerView = this.$ol.format.fromLonLat([this.userPosition.coordinates[1],
+          this.userPosition.coordinates[0]])
+      } else if (this.$ol.format.fromLonLat(locations && locations.length > 0)) {
+        this.centerView = this.$ol.format.fromLonLat([(locations[0].longitude),
+          (locations[0].latitude)])
+      } else {
+        this.centerView = this.$ol.format.fromLonLat([12, 54])
+      }
+      const centerView = this.centerView
 
       const options = {
         target: this.$refs.map,
