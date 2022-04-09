@@ -37,7 +37,6 @@
       <ClientOnly>
         <MapContainerUser
           ref="mapContainer"
-          :render="render"
           :locations="locations"
           :walks="walks"
           :set-walk="setWalk"

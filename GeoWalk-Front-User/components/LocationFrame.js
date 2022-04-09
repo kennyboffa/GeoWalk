@@ -27,11 +27,13 @@ export default {
           console.log(error)
         }
       } else {
+        console.log(manualLocation)
         this.address = await locationService.manualAddress(manualLocation)
         this.loading = false
         this.$cookiz.set('userPosition', this.address)
         console.log('manual')
-        console.log(this.address)
+
+        // console.log(this.address)
       }
     },
     setErrorState () { // lägg till error

@@ -165,7 +165,7 @@ export default {
     // adds all the current locations to the map
     addCurrentPosition (layerId, [lon, lat], typeOfLayer) { // typeOfLayer = position, label, user
       const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, lon, lat)
-      this.mapHelper.addPosition(createdLayer, this.title)
+      this.mapHelper.addPositionInfo(createdLayer, this.title)
       this.mapHelper.createLabel(createdLayer, lon, lat)
     },
 

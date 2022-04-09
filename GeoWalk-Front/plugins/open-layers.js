@@ -93,7 +93,7 @@ export default (context, inject) => {
         map.addLayer(vectorLayer)
         return (vectorLayer)
       },
-      addPosition (layer, title, content) {
+      addPositionInfo (layer, title, content) {
         layer.title = title
         layer.content = content
 

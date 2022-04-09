@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PreGame :selected-walk-id="$route.params.walkId" />
+    <TheGame :selected-walk-id="$route.params.walkId" />
   </div>
 </template>
 <script>

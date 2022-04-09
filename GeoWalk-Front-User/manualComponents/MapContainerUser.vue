@@ -23,7 +23,6 @@
 export default {
   name: 'Map',
   props: {
-    render: { type: Boolean, default: false },
     locationRemoved: { type: Number, default: null },
     locations: { type: Array, default: () => [] },
     setZoom: { type: Number, default: null },
@@ -52,15 +51,12 @@ export default {
       ]
     }
   },
-  watch: {
-    render (oldValue, newValue) {
-      if (this.render === true) {
-        this.reCenter()
-      }
-    }
-  },
+
   mounted () {
     this.activate()
+    this.$nuxt.$on('updateCenterView', () => {
+      this.reCenter()
+    })
   },
   methods: {
     reCenter () {
@@ -70,15 +66,10 @@ export default {
     activate () {
       setTimeout(() => {
         this.renderChart(this.locations)
-      }, 1000)
+      }, 500)
     },
 
     renderChart (locations) {
-      // const centerView = this.$ol.format.fromLonLat(locations && locations.length > 0
-      //   ? [(locations[0].longitude),
-      //       (locations[0].latitude)]
-      //   : [12, 54])
-
       if (this.userPosition.coordinates && this.userPosition.coordinates.length > 0) {
         this.centerView = this.$ol.format.fromLonLat([this.userPosition.coordinates[1],
           this.userPosition.coordinates[0]])
@@ -95,7 +86,7 @@ export default {
         zoom: this.setZoom,
         centerView,
         layers: [
-        // adding a background tiled layer
+          // adding a background tiled layer
           new this.$ol.layer.TileLayer({
             source: new this.$ol.source.OSM() // tiles are served by OpenStreetMap
           })
@@ -105,16 +96,13 @@ export default {
 
       }
       this.mapHelper = this.$ol.createMap(options)
-      this.mapHelper.map.on('click', (e) => {
+      this.$store.map = this.mapHelper
+      // this.mapHelper.map.on('click', (e) => {
 
-      })
+      // })
 
       // let stopPropagation = false
       this.mapHelper.map.on('click', (e) => {
-        // if (stopPropagation) {
-        //   // return false
-        // }
-
         this.mapHelper.map.forEachFeatureAtPixel(e.pixel, (feature) => {
           this.$router.push({ path: `./${feature.values_.setWalkId}` })
         })
@@ -139,6 +127,7 @@ export default {
     }
   }
 }
+
 </script>
 <style >
 #map {

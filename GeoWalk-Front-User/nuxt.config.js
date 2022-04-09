@@ -2,15 +2,14 @@ import colors from 'vuetify/es5/util/colors'
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
-
+  server: {
+    port: 8000 // default: 3000
+  },
   head: {
     titleTemplate: '%s - GeoWalk',
     title: 'GeoWalk',
     htmlAttrs: {
       lang: 'en'
-    },
-    server: {
-      port: 8000 // default: 3000
     },
     meta: [
       { charset: 'utf-8' },

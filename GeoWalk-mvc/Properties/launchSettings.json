@@ -4,7 +4,7 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:3001", //ändra på hemmadator 3001 // laptop 3000
-      "sslPort": 3000 //ändra på hemmadator 3000 // laptop 3001
+      //"sslPort": 3001 //ändra på hemmadator 3000 // laptop 3001
     }
   },
   "profiles": {

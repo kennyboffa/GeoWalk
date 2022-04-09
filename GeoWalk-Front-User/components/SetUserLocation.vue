@@ -6,7 +6,7 @@
       <LocationFrame>
         <form
           slot-scope="{
-            address,
+
             error,
             fetchAddress,
             geolocationSupported,
@@ -17,7 +17,7 @@
           <v-btn
             v-if="geolocationSupported = true"
             type="button"
-            @click="[fetchAddress(), setRender()]"
+            @click="[fetchAddress(), $nuxt.$emit('updateCenterView')]"
           >
             {{ loading ? 'Loading ...' : 'Autofill my address' }}
           </v-btn>
@@ -30,26 +30,26 @@
           </div>
           <div>
             <v-text-field
-              v-model="address.road"
+              v-model="address.street"
               name="street"
               label="Street"
             />
 
-            <v-text-field
+            <!-- <v-text-field
               v-model="address.house_number"
               name="street_number"
               label="Street Number"
-            />
+            /> -->
             <v-text-field
-              v-model="address.postcode"
+              v-model="address.postalcode"
               name="postalcode"
               label="Postal Code"
             />
 
             <v-text-field
-              v-model="address.town"
-              name="town"
-              label="Town"
+              v-model="address.city"
+              name="city"
+              label="City"
               required
             />
 
@@ -59,7 +59,7 @@
               label="Country"
             />
           </div>
-          <v-btn class="success" @click="[fetchAddress(address), setRender()]">
+          <v-btn class="success" @click="[fetchAddress(address), $nuxt.$emit('updateCenterView')]">
             Update Walks
           </v-btn>
         </form>
@@ -79,22 +79,13 @@ export default {
   data () {
     return {
       address: {
-        road: undefined,
-        house_number: undefined,
+        street: undefined,
+        // house_number: undefined,
         country: undefined,
-        town: undefined,
-        postcode: undefined
+        city: undefined,
+        postalcode: undefined
 
       }
-    }
-  },
-  methods: {
-
-    SetManualAddress (address) {
-
-    },
-    setRender () {
-      this.$emit('render')
     }
   }
 }
