@@ -96,7 +96,6 @@ export default {
 
       }
       this.mapHelper = this.$ol.createMap(options)
-      this.$store.map = this.mapHelper
       // this.mapHelper.map.on('click', (e) => {
 
       // })
@@ -124,8 +123,11 @@ export default {
       const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, walkId, lon, lat)
       this.mapHelper.addPosition(createdLayer, this.title)
       this.mapHelper.createLabel(createdLayer, lon, lat)
+      this.$store.map = this.mapHelper
     }
+
   }
+
 }
 
 </script>
