@@ -83,7 +83,7 @@ export default (context, inject) => {
         const vectorLayer = new ol.layer.VectorLayer({
           id: layerId,
           type: typeOfLayer,
-          visible: true, // hides the layer from the user
+          visible: true, // hides/shows the layer from the user
           walkId: setWalkId,
 
           style: styleFunction,
@@ -170,12 +170,13 @@ export default (context, inject) => {
 
         const labelLayer = new ol.layer.VectorLayer({
           name: layer.title,
-          visible: false, // hides the label from the user
+          visible: false, // hides/shows the label from the user
           source: new ol.source.VectorSource({
             features: [labelFeature]
           })
         })
         allFeatures.push(labelFeature)
+        // console.log(allFeatures)
         map.addLayer(labelLayer)
       }
     }

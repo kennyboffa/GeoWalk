@@ -6,7 +6,7 @@ export default {
       manualLocation: {},
       address: {},
       error: null,
-      geolocationSupported: '',
+      geolocationSupported: undefined,
       loading: false
     }
   },

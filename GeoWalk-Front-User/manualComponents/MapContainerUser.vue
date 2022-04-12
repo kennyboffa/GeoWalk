@@ -51,22 +51,23 @@ export default {
       ]
     }
   },
-
-  mounted () {
-    this.activate()
+  beforeMount () {
     this.$nuxt.$on('updateCenterView', () => {
       this.reCenter()
     })
   },
+  mounted () {
+    this.activate()
+  },
   methods: {
     reCenter () {
       this.centerView = this.userPosition.coordinates
-      console.log(this.centerView)
+      console.log(this.userPosition.coordinates)
     },
     activate () {
       setTimeout(() => {
         this.renderChart(this.locations)
-      }, 500)
+      }, 300)
     },
 
     renderChart (locations) {
@@ -80,6 +81,7 @@ export default {
         this.centerView = this.$ol.format.fromLonLat([12, 54])
       }
       const centerView = this.centerView
+      console.log(centerView)
 
       const options = {
         target: this.$refs.map,

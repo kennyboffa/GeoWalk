@@ -4,26 +4,15 @@ const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const SEARCHENDPOINT = 'https://nominatim.openstreetmap.org/search?q='
 const FORMAT = 'jsonv2'
 
-export function currentCoordinates (manualLocation) {
-  if (!manualLocation) {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => resolve(coords),
-        // Reject if the user doesn't
-        // allow accessing their location.
-        error => reject(error)
-      )
-    })
-  } else {
-    return new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => resolve(coords),
-        // Reject if the user doesn't
-        // allow accessing their location.
-        error => reject(error)
-      )
-    })
-  }
+export function currentCoordinates () {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => resolve(coords),
+      // Reject if the user doesn't
+      // allow accessing their location.
+      error => reject(error)
+    )
+  })
 }
 
 export async function addressByCoordinates ({ latitude, longitude }) {
@@ -34,11 +23,11 @@ export async function addressByCoordinates ({ latitude, longitude }) {
       lon: longitude
     }
   })
-  data.address.coordinates = [latitude, longitude]
+  // data.address.coordinates = [latitude, longitude]
   return data.address
 }
-export async function currentAddress (manualLocation) {
-  const coordinates = await currentCoordinates(manualLocation)
+export async function currentAddress () {
+  const coordinates = await currentCoordinates()
   return addressByCoordinates(coordinates)
 }
 
@@ -58,9 +47,15 @@ async function coordinatesByAddress (manualLocation) {
   console.log(data)
   return data
 }
+// async function coordinatesByAddress (manualLocation) {
+//   console.log(manualLocation)
+//   const { data } = await axios.get(`${SEARCHENDPOINT + manualLocation.street + ',' + manualLocation.postalcode}'${FORMAT}`)
+//   console.log(data)
+//   return data
+// }
 export async function manualAddress (manualLocation) {
-  console.log(manualLocation)
   const coordinates = await coordinatesByAddress(manualLocation)
+  console.log(coordinates)
   return coordinates
 }
 
