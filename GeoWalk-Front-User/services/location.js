@@ -24,7 +24,7 @@ export async function addressByCoordinates ({ latitude, longitude }) {
     }
   })
   // data.address.coordinates = [latitude, longitude]
-  return data.address
+  return data
 }
 export async function currentAddress () {
   const coordinates = await currentCoordinates()
@@ -44,7 +44,6 @@ async function coordinatesByAddress (manualLocation) {
       format: FORMAT
     }
   })
-  console.log(data)
   return data
 }
 // async function coordinatesByAddress (manualLocation) {

@@ -36,8 +36,8 @@ export default {
 
         }
       ],
-      centerView: undefined,
-      userPosition: this.$cookiz.get('userPosition'),
+      centerView: [],
+      userPosition: undefined,
       contentLocationId: null,
       showLayers: [],
       aLayer: '',
@@ -51,32 +51,40 @@ export default {
       ]
     }
   },
-  beforeMount () {
+
+  mounted () {
+    this.activate()
     this.$nuxt.$on('updateCenterView', () => {
       this.reCenter()
     })
   },
-  mounted () {
-    this.activate()
-  },
   methods: {
     reCenter () {
-      this.centerView = this.userPosition.coordinates
-      console.log(this.userPosition.coordinates)
+      this.$destroy(this.$refs.map)
+      // window.location.reload(true)
+      this.userPosition = this.$cookiz.get('userPosition')
+      this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
+        this.userPosition.lat])
+      console.log(this.centerView)
+      this.$cookiz.remove('userPosition')
+      this.renderChart()
+      // console.log(this.mapHelper.map.renderer_.map_.values_.view.targetCenter)
     },
     activate () {
       setTimeout(() => {
-        this.renderChart(this.locations)
+        this.renderChart()
       }, 300)
     },
 
-    renderChart (locations) {
-      if (this.userPosition.coordinates && this.userPosition.coordinates.length > 0) {
-        this.centerView = this.$ol.format.fromLonLat([this.userPosition.coordinates[1],
-          this.userPosition.coordinates[0]])
-      } else if (this.$ol.format.fromLonLat(locations && locations.length > 0)) {
-        this.centerView = this.$ol.format.fromLonLat([(locations[0].longitude),
-          (locations[0].latitude)])
+    renderChart () {
+      if (this.userPosition) {
+        this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
+          this.userPosition.lat])
+        console.log('user')
+      } else if (this.$ol.format.fromLonLat(this.locations && this.locations.length > 0)) {
+        this.centerView = this.$ol.format.fromLonLat([(this.locations[0].longitude),
+          (this.locations[0].latitude)])
+        console.log('loc')
       } else {
         this.centerView = this.$ol.format.fromLonLat([12, 54])
       }
@@ -98,6 +106,7 @@ export default {
 
       }
       this.mapHelper = this.$ol.createMap(options)
+      console.log(this.mapHelper)
       // this.mapHelper.map.on('click', (e) => {
 
       // })
@@ -112,7 +121,7 @@ export default {
       let walkId = -1
 
       // reads the current locations and sends to method to add them to the map
-      for (const location of locations) {
+      for (const location of this.locations) {
         const lonLat = this.$ol.format.fromLonLat([(location.longitude), (location.latitude)])
         this.title = location.title
         walkId = location.walkId

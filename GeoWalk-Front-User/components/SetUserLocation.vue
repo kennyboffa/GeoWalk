@@ -6,7 +6,6 @@
       <LocationFrame>
         <form
           slot-scope="{
-
             error,
             fetchAddress,
             geolocationSupported,

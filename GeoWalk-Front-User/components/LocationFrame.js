@@ -20,7 +20,6 @@ export default {
           // this.setLoadingState()
           this.address = await locationService.currentAddress()
           this.loading = false
-          this.$cookiz.set('userPosition', this.address)
           console.log('inte manual')
         } catch (error) {
           this.setErrorState(error)
@@ -30,11 +29,11 @@ export default {
         console.log(manualLocation)
         this.address = await locationService.manualAddress(manualLocation)
         this.loading = false
-        this.$cookiz.set('userPosition', this.address)
         console.log('manual')
 
         // console.log(this.address)
       }
+      this.$cookiz.set('userPosition', this.address, { maxAge: 60 * 60 })
     },
     setErrorState () { // lägg till error
       this.error = null
