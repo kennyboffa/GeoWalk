@@ -3,7 +3,6 @@ import * as locationService from '../services/location'
 export default {
   data () {
     return {
-      manualLocation: {},
       address: {},
       error: null,
       geolocationSupported: undefined,
@@ -26,14 +25,13 @@ export default {
           console.log(error)
         }
       } else {
-        console.log(manualLocation)
         this.address = await locationService.manualAddress(manualLocation)
         this.loading = false
         console.log('manual')
-
-        // console.log(this.address)
       }
       this.$cookiz.set('userPosition', this.address, { maxAge: 60 * 60 })
+      console.log(this.address)
+      this.$nuxt.$emit('updateCenterView')
     },
     setErrorState () { // lägg till error
       this.error = null

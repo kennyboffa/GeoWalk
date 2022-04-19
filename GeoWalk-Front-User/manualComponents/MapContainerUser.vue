@@ -60,15 +60,10 @@ export default {
   },
   methods: {
     reCenter () {
-      this.$destroy(this.$refs.map)
-      // window.location.reload(true)
+      if (this.$refs.map) { this.$refs.map.innerHTML = '' }
       this.userPosition = this.$cookiz.get('userPosition')
-      this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
-        this.userPosition.lat])
-      console.log(this.centerView)
       this.$cookiz.remove('userPosition')
       this.renderChart()
-      // console.log(this.mapHelper.map.renderer_.map_.values_.view.targetCenter)
     },
     activate () {
       setTimeout(() => {
@@ -98,6 +93,7 @@ export default {
         layers: [
           // adding a background tiled layer
           new this.$ol.layer.TileLayer({
+
             source: new this.$ol.source.OSM() // tiles are served by OpenStreetMap
           })
 
@@ -106,7 +102,6 @@ export default {
 
       }
       this.mapHelper = this.$ol.createMap(options)
-      console.log(this.mapHelper)
       // this.mapHelper.map.on('click', (e) => {
 
       // })
@@ -136,7 +131,6 @@ export default {
       this.mapHelper.createLabel(createdLayer, lon, lat)
       this.$store.map = this.mapHelper
     }
-
   }
 
 }

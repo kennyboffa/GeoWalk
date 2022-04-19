@@ -16,7 +16,7 @@
           <v-btn
             v-if="geolocationSupported = true"
             type="button"
-            @click="[fetchAddress(), $nuxt.$emit('updateCenterView')]"
+            @click="fetchAddress()"
           >
             {{ loading ? 'Loading ...' : 'Autofill my address' }}
           </v-btn>
@@ -58,7 +58,7 @@
               label="Country"
             />
           </div>
-          <v-btn class="success" @click="[fetchAddress(address), $nuxt.$emit('updateCenterView')]">
+          <v-btn class="success" @click="fetchAddress(address)">
             Update Walks
           </v-btn>
         </form>
@@ -86,6 +86,8 @@ export default {
 
       }
     }
+  },
+  methods: {
   }
 }
 </script>

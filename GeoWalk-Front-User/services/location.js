@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
-const SEARCHENDPOINT = 'https://nominatim.openstreetmap.org/search?q='
+const SEARCHENDPOINT = 'https://nominatim.openstreetmap.org/search'
 const FORMAT = 'jsonv2'
 
 export function currentCoordinates () {
@@ -33,18 +33,15 @@ export async function currentAddress () {
 
 async function coordinatesByAddress (manualLocation) {
   const { data } = await axios.get(SEARCHENDPOINT, {
-
-    query: {
+    params: {
       street: manualLocation.street,
       city: manualLocation.city,
       country: manualLocation.country,
-      postalcode: manualLocation.postalcode
-    },
-    params: {
+      postalcode: manualLocation.postalcode,
       format: FORMAT
     }
   })
-  return data
+  return data[0]
 }
 // async function coordinatesByAddress (manualLocation) {
 //   console.log(manualLocation)
@@ -54,7 +51,6 @@ async function coordinatesByAddress (manualLocation) {
 // }
 export async function manualAddress (manualLocation) {
   const coordinates = await coordinatesByAddress(manualLocation)
-  console.log(coordinates)
   return coordinates
 }
 

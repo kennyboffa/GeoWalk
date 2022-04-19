@@ -1,6 +1,7 @@
 import Map from 'ol/Map'
 import View from 'ol/View'
 import OSM from 'ol/source/OSM'
+import Source from 'ol/source/Source'
 import VectorSource from 'ol/source/Vector'
 import TileLayer from 'ol/layer/Tile'
 import VectorLayer from 'ol/layer/Vector'
@@ -15,6 +16,7 @@ export default (context, inject) => {
     Map,
     View,
     source: {
+      Source,
       OSM,
       VectorSource
     },
@@ -57,7 +59,7 @@ export default (context, inject) => {
     options = {
       view: new ol.View({
         center: options.centerView ?? ol.format.fromLonLat([16, 15]),
-        zoom: options.zoom ?? 7
+        zoom: options.zoom ?? 10
       }),
       ...options
     }
@@ -92,6 +94,7 @@ export default (context, inject) => {
 
           })
         })
+
         map.addLayer(vectorLayer)
         return (vectorLayer)
       },
@@ -170,7 +173,7 @@ export default (context, inject) => {
 
         const labelLayer = new ol.layer.VectorLayer({
           name: layer.title,
-          visible: false, // hides/shows the label from the user
+          visible: true, // hides/shows the label from the user
           source: new ol.source.VectorSource({
             features: [labelFeature]
           })
