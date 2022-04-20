@@ -77,7 +77,10 @@ export default {
         .then((res) => {
           this.walks = res.data
           this.walks.forEach((element) => {
-            this.locations.push(element.locations[0])
+            this.locations.push({
+              ...element.locations[0],
+              visible: false
+            })
             // this.setWalk.push(element.id)
             // console.log(element.id)
           })

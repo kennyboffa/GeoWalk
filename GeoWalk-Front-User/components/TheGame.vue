@@ -1,5 +1,15 @@
 <template>
   <div>
+    <v-dialog
+      v-model="contentDialog"
+      persistent
+      max-width="600px"
+    >
+      <ContentDialog
+        :location-content="locationContent"
+        @dialog-close="contentDialog = false"
+      />
+    </v-dialog>
     <v-btn
       v-if="notPlaying"
       class="success"
@@ -50,8 +60,11 @@ export default {
   ],
   data () {
     return {
+      currentLocation: undefined,
       locations: this.locations,
-      zoom: 16,
+      contentDialog: false,
+      locationContent: undefined,
+      zoom: 17,
       closeToPoint: false,
       correctAnswer: false,
       doneClicked: false,
@@ -61,9 +74,8 @@ export default {
       noMoreContent: false,
       locationDone: false,
       showNext: false,
-      visitedLocations: [],
-      visitedMapPoints: []
-      // mapPoints: this.$refs.mapContainer.mapHelper.map.values_.layergroup.values_.layers.array_
+      visitedLocations: []
+      // this.$refs.mapContainer.mapHelper.map.values_.layergroup.values_.layers.array_
       // mapPoints: this.$store.map.map.values_.layergroup.values_.layers.array_
     }
   },
@@ -78,7 +90,7 @@ export default {
         .get(`/walk/${this.selectedWalkId}`)
         .then((res) => {
           this.walk = res.data
-          this.locations = res.data.locations
+          this.locations = res.data.locations.map(x => ({ ...x, visible: false }))
           // this.$emit('walkId')
         })
     },
@@ -88,81 +100,78 @@ export default {
     runGame () {
       this.gameInProgress = true
       this.notPlaying = false
-      console.log(this.$refs.mapContainerGame)
+
       this.showNextLocation()
 
-      // setTimeout(() => {
-      //   this.showNextLocation()
-      // }, 1000)
-
-      if (this.showNext) {
-        this.showLocationContent()
-      }
-      if (this.showNext && this.gameInProgress) {
-        this.runGame()
-      } else if (!this.showNext) {
-        this.gameInProgress = false
-      }
+      // if (this.showNext) {
+      //   this.showLocationContent()
+      // }
+      // if (this.showNext && this.gameInProgress) {
+      //   this.runGame()
+      // } else if (!this.showNext) {
+      //   this.gameInProgress = false
+      // }
       // } else if (this.noMoreContent === true) {
       //   this.gameInProgress = false
       // }
     },
 
     showNextLocation () {
-      this.locationDone = false
-
-      if (this.closeToPoint) { // - if user is close enough to location open dialog
-        this.showContentDialog(this.locationId)
-      }
+      // show user dot and start tracking
 
       if (this.locations.length > 0) {
-        // this.visitedLocations.push(this.locations[0]) // adds the first location in the array to the visited ones
+        // adds the first location in the array to the visited ones
 
-        // this.visitedMapPoints.push(this.mapPoints[1]) // adds the point
-        // this.visitedMapPoints.push(this.mapPoints[2]) // adds the label
-        // this.visitedMapPoints[0].values_.visible = true
-        // console.log(this.visitedMapPoints)
-        if (this.$refs.mapContainerGame) {
-          this.$refs.mapContainerGame.$refs.map.innerHTML = ''
-
-          this.$refs.mapContainerGame._props.locations[1] = ''
-          // this.$refs.mapContainerGame.mapHelper.map.values_.layergroup.values_.layers.array_[0].values_.visible = false
-          // this.$refs.mapContainerGame.mapHelper.map.values_.layergroup.values_.layers.array_[1].values_.visible = false
-          // this.$refs.mapContainerGame.mapHelper.map.values_.layergroup.values_.layers.array_[2].values_.visible = false
-          // this.$refs.mapContainerGame.mapHelper.map.values_.layergroup.values_.layers.array_[3].title = ''
+        // let timeout = 1000 // simulates the game
+        for (const location of this.locations) {
+          // setTimeout(() => {
+          location.visible = true
           this.$refs.mapContainerGame.renderChart()
-          console.log(this.$refs.mapContainerGame.mapHelper.map.values_.layergroup.values_.layers.array_[3])
-          // console.log(this.mapPoints[1].values_)
+
+          this.closeToPoint = true
+          if (this.closeToPoint) {
+            this.locationDone = false// - if user is close enough to location open dialog
+            this.showContentDialog(location)
+          }
+
+          // logic to show content and if the location is completed, conditional etc to set the below
+          this.locationDone = true
+
+          if (this.locationDone) {
+            console.log('done')
+            this.visitedLocations.push(this.locations[0])
+            this.locations.shift(0) // removes the location
+          }
+          // }, timeout)
+          // timeout += 1000
         }
 
-        this.locationDone = true // just to stop the loop
-
-        // if (this.locationDone) {
-        //   this.locations.shift(0) // removes the location
-        //   this.mapPoints.shift(1) // removes the point
-        //   this.mapPoints.shift(2) // removes the label
-        // }
-
-        console.log('update the map')
-        this.showNext = false
-      } else {
+        this.showNext = true
+      } else if (this.locationDone) {
         this.showNext = false
         this.gameInProgress = false
         console.log('no more locations')
         this.quitGame()
       }
     },
-    showContentDialog (locationId) {
+    showContentDialog (location) {
       // show content, wait for the right answer
+      this.locationContent = location
+      this.contentDialog = true
+      console.log(location)
+
       if (this.correctAnswer || this.doneClicked) {
+        console.log('asd')
         this.locationDone = true // set location done in showContentDialog
-      }
+      } else { this.locationDone = false }
     },
 
     quitGame () {
       this.quitPressed = true
       this.gameInProgress = false
       this.notPlaying = true
+      this.visitedLocations = []
+      this.GetWalk()
       console.log('quit')
     },
     showLocationContent () {

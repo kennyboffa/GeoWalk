@@ -45,6 +45,7 @@ export default {
       longitude: '',
       title: undefined,
       mapHelper: null,
+      isVisible: true,
       positions: [
         {
         }
@@ -60,7 +61,7 @@ export default {
   },
   methods: {
     reCenter () {
-      if (this.$refs.map) { this.$refs.map.innerHTML = '' }
+      // if (this.$refs.map) { this.$refs.map.innerHTML = '' }
       this.userPosition = this.$cookiz.get('userPosition')
       this.$cookiz.remove('userPosition')
       this.renderChart()
@@ -72,6 +73,7 @@ export default {
     },
 
     renderChart () {
+      this.$refs.map.innerHTML = ''
       if (this.userPosition) {
         this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
           this.userPosition.lat])
@@ -120,13 +122,14 @@ export default {
         const lonLat = this.$ol.format.fromLonLat([(location.longitude), (location.latitude)])
         this.title = location.title
         walkId = location.walkId
+        this.isVisible = location.visible
 
-        this.addCurrentPosition(`${location.id}`, lonLat, this.typeOfLayer, walkId)
+        this.addCurrentPosition(`${location.id}`, lonLat, this.typeOfLayer, walkId, this.isVisible)
       }
     },
     // adds all the current locations to the map
-    addCurrentPosition (layerId, [lon, lat], typeOfLayer, walkId) { // typeOfLayer = position, label, user
-      const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, walkId, lon, lat)
+    addCurrentPosition (layerId, [lon, lat], typeOfLayer, walkId, isVisible) { // typeOfLayer = position, label, user
+      const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, walkId, lon, lat, isVisible)
       this.mapHelper.addPosition(createdLayer, this.title)
       this.mapHelper.createLabel(createdLayer, lon, lat)
       this.$store.map = this.mapHelper
