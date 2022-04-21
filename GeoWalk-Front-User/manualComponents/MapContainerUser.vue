@@ -77,16 +77,13 @@ export default {
       if (this.userPosition) {
         this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
           this.userPosition.lat])
-        console.log('user')
       } else if (this.$ol.format.fromLonLat(this.locations && this.locations.length > 0)) {
         this.centerView = this.$ol.format.fromLonLat([(this.locations[0].longitude),
           (this.locations[0].latitude)])
-        console.log('loc')
       } else {
         this.centerView = this.$ol.format.fromLonLat([12, 54])
       }
       const centerView = this.centerView
-      console.log(centerView)
 
       const options = {
         target: this.$refs.map,

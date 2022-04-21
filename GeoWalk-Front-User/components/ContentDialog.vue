@@ -15,68 +15,38 @@
               v-for="(item,index) in baseContent"
               :key="index"
             >
-              Content Type for Location {{ item.title }}
+              {{ item.title }}
 
-              <v-card-text>{{ item.summarize }}</v-card-text>
+              <v-card-text>{{ item.summarize }} {{ totalScore }}</v-card-text>
               <div
-                v-for="(i, ind) in content.answers"
+                v-for="(i, ind) in answers"
                 :key="ind"
               >
-                <v-radio
-                  v-if="item.type == 'questionanswer'"
-                  v-model="radio1"
-                  label="Answer 1"
-                  value="i"
-                />
-                <v-radio
-                  v-if="item.type == 'questionanswer'"
-                  v-model="radio2"
-                  label="Answer 2"
-                  value="Answer2"
-                />
+                <v-radio-group
+                  v-if="item.type = 'questionanswer'"
+                  v-model="points"
+                >
+                  <v-radio
+                    :label="`${i.answerText}`"
+                    :value="i.points"
+                  />
+                  <div>{{ i.points }}</div>
+                </v-radio-group>
               </div>
             </div>
-            <!-- <v-radio-group
-              v-model="radioButtonSelected"
-              row
-              mandatory
-            > -->
-
-            <!-- </v-radio-group> -->
-
-            <!-- <v-text-field
-              v-if="radioButtonSelected === radio2"
-              v-model="answers.two"
-              label="Answer"
-              value=":this.answers"
-            />
-            <v-text-field
-              v-if="radioButtonSelected === radio2"
-              v-model="answers.three"
-              label="Answer"
-              value=":this.answers"
-            /> -->
-            <!-- <div
-              v-for="(answer,index) in answers"
-              :key="index"
-            >
-              <v-text-field
-                v-if="radioButtonSelected === radio2"
-                v-model="answer.index"
-                label="Answer"
-                value=":this.answers"
-              /> -->
           </v-col>
-          <v-col
-            cols="12"
-            sm="6"
-            md="4"
-          />
         </v-row>
       </v-container>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
+      <v-btn
+        color="green darken-1"
+        text
+        @click="[$emit('dialog-close'), addPoints(points)]"
+      >
+        Submit
+      </v-btn>
       <v-btn
         color="blue darken-1"
         text
@@ -91,15 +61,18 @@
 <script>
 export default {
   props: {
-    locationContent: { type: Object, default: null }
+    locationContent: { type: Object, default: null },
+    activate: { type: Boolean, default: false }
   },
   data () {
     return {
+      radioGroup: 1,
+      totalScore: null,
+      points: null,
       baseContent: [],
       content: [],
       title: undefined,
-      radio1: undefined,
-      radio2: undefined,
+      radioSelected: undefined,
       info: '',
       question: '',
       type: 'info',
@@ -108,26 +81,38 @@ export default {
       }]
     }
   },
-  created () {
-    this.GetLocationContent()
+  mounted () {
+    this.$nuxt.$on('getContent', () => {
+      this.GetLocationContent()
+    })
   },
   methods: {
     GetLocationContent () {
       this.$axios
         .get(`/location/${this.locationContent.id}`)
         .then((res) => {
-          this.baseContent = res.data.contents
           console.log(this.baseContent)
-          this.GetContent()
+          this.baseContent = res.data.contents
+          this.GetContent(this.baseContent[0].id)
+          this.GetAnswers(this.baseContent[0].id)
         })
     },
-    GetContent () {
+    GetAnswers (id) {
       this.$axios
-        .get(`/content/${this.baseContent[0].id}`)
+        .get(`/content/${id}/questionanswer`)
+        .then((res) => {
+          this.answers = res.data
+        })
+    },
+    GetContent (id) {
+      this.$axios
+        .get(`/content/${id}`)
         .then((res) => {
           this.content = res.data
-          console.log(this.content)
         })
+    },
+    addPoints (points) {
+      this.totalScore += points
     }
   }
 }

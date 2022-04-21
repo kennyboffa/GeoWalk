@@ -7,7 +7,7 @@
     >
       <ContentDialog
         :location-content="locationContent"
-        @dialog-close="contentDialog = false"
+        @dialog-close="[contentDialog = false, locationDone = true, showNext = true ]"
       />
     </v-dialog>
     <v-btn
@@ -55,9 +55,10 @@ export default {
   components: {
     MapContainerUser
   },
-  props: [
-    'selectedWalkId'
-  ],
+  props: {
+    selectedWalkId: { type: Number, default: null }
+  },
+
   data () {
     return {
       currentLocation: undefined,
@@ -102,18 +103,6 @@ export default {
       this.notPlaying = false
 
       this.showNextLocation()
-
-      // if (this.showNext) {
-      //   this.showLocationContent()
-      // }
-      // if (this.showNext && this.gameInProgress) {
-      //   this.runGame()
-      // } else if (!this.showNext) {
-      //   this.gameInProgress = false
-      // }
-      // } else if (this.noMoreContent === true) {
-      //   this.gameInProgress = false
-      // }
     },
 
     showNextLocation () {
@@ -121,32 +110,21 @@ export default {
 
       if (this.locations.length > 0) {
         // adds the first location in the array to the visited ones
+        this.locationContent = this.locations[0]
+        this.locations[0].visible = true
+        this.$refs.mapContainerGame.renderChart()
 
-        // let timeout = 1000 // simulates the game
-        for (const location of this.locations) {
-          // setTimeout(() => {
-          location.visible = true
-          this.$refs.mapContainerGame.renderChart()
-
+        setTimeout(() => {
           this.closeToPoint = true
           if (this.closeToPoint) {
             this.locationDone = false// - if user is close enough to location open dialog
-            this.showContentDialog(location)
-          }
 
-          // logic to show content and if the location is completed, conditional etc to set the below
-          this.locationDone = true
-
-          if (this.locationDone) {
-            console.log('done')
+            this.locationDone = this.showContentDialog(this.locations[0])
             this.visitedLocations.push(this.locations[0])
             this.locations.shift(0) // removes the location
           }
-          // }, timeout)
-          // timeout += 1000
-        }
-
-        this.showNext = true
+        }, 2000)
+        // logic to show content and if the location is completed, conditional etc to set the below
       } else if (this.locationDone) {
         this.showNext = false
         this.gameInProgress = false
@@ -154,16 +132,14 @@ export default {
         this.quitGame()
       }
     },
-    showContentDialog (location) {
+    showContentDialog () {
       // show content, wait for the right answer
-      this.locationContent = location
+      this.$nuxt.$emit('getContent')
       this.contentDialog = true
-      console.log(location)
-
-      if (this.correctAnswer || this.doneClicked) {
-        console.log('asd')
-        this.locationDone = true // set location done in showContentDialog
-      } else { this.locationDone = false }
+      console.log('done')
+      if (this.locationDone) {
+        return true
+      }
     },
 
     quitGame () {
@@ -173,13 +149,6 @@ export default {
       this.visitedLocations = []
       this.GetWalk()
       console.log('quit')
-    },
-    showLocationContent () {
-      // show dialog with fact/questions
-      // add logic to check if user visited location and finished task
-      console.log('content')
-      this.showNext = true
-      // if location is visited and "done" return true
     }
   }
 }

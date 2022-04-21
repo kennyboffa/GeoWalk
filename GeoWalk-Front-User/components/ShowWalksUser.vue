@@ -60,7 +60,6 @@ export default {
   },
   data () {
     return {
-      componentKey: 0,
       walks: [],
       locations: [],
       setWalk: []
