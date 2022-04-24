@@ -12,9 +12,11 @@
             md="12"
           >
             <div
-              v-for="(item,index) in baseContent"
+              v-for="(item, index) in baseContent"
               :key="index"
+              contentType="item.type"
             >
+              <div />
               {{ item.title }}
 
               <v-card-text>{{ item.summarize }} {{ totalScore }}</v-card-text>
@@ -23,10 +25,11 @@
                 :key="ind"
               >
                 <v-radio-group
-                  v-if="item.type = 'questionanswer'"
+                  v-if="contentType = 'questionanswer'"
                   v-model="points"
                 >
                   <v-radio
+                    v-if="contentType = 'questionanswer'"
                     :label="`${i.answerText}`"
                     :value="i.points"
                   />
@@ -41,6 +44,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
+        v-if="contentType = 'questionanswer'"
         color="green darken-1"
         text
         @click="[$emit('dialog-close'), addPoints(points)]"
@@ -66,11 +70,12 @@ export default {
   },
   data () {
     return {
+      contentType: undefined,
       radioGroup: 1,
       totalScore: null,
       points: null,
       baseContent: [],
-      content: [],
+      content: {},
       title: undefined,
       radioSelected: undefined,
       info: '',
@@ -91,10 +96,12 @@ export default {
       this.$axios
         .get(`/location/${this.locationContent.id}`)
         .then((res) => {
-          console.log(this.baseContent)
           this.baseContent = res.data.contents
+          console.log(this.baseContent)
           this.GetContent(this.baseContent[0].id)
-          this.GetAnswers(this.baseContent[0].id)
+          if (this.baseContent.type === 'questionanswer') {
+            this.GetAnswers(this.baseContent[0].id)
+          }
         })
     },
     GetAnswers (id) {
