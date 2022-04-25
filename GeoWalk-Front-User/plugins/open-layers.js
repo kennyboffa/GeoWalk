@@ -69,6 +69,7 @@ export default (context, inject) => {
       map,
       addLayer: (layerId, typeOfLayer, setWalkId, x, y, isVisible = false) => {
         const feature = new ol.format.GeoJSON().readFeature(
+
           {
             type: 'Feature',
             properties: { layerId, typeOfLayer, setWalkId, isVisible },
@@ -94,7 +95,6 @@ export default (context, inject) => {
 
           })
         })
-
         map.addLayer(vectorLayer)
         return (vectorLayer)
       },

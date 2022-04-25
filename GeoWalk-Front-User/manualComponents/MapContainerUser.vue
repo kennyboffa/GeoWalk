@@ -38,6 +38,7 @@ export default {
       ],
       centerView: [],
       userPosition: undefined,
+      userPos: undefined,
       contentLocationId: null,
       showLayers: [],
       aLayer: '',
@@ -68,8 +69,8 @@ export default {
     },
     activate () {
       setTimeout(() => {
-        this.renderChart()
-      }, 300)
+        this.renderChart() // necessary to allow the fetch to finish on locations before reading lat and lon
+      }, 600)
     },
 
     renderChart () {
@@ -77,6 +78,7 @@ export default {
       if (this.userPosition) {
         this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
           this.userPosition.lat])
+        this.userPos = this.centerView
       } else if (this.$ol.format.fromLonLat(this.locations && this.locations.length > 0)) {
         this.centerView = this.$ol.format.fromLonLat([(this.locations[0].longitude),
           (this.locations[0].latitude)])
@@ -123,6 +125,7 @@ export default {
 
         this.addCurrentPosition(`${location.id}`, lonLat, this.typeOfLayer, walkId, this.isVisible)
       }
+      // this.addUserPosition(this.userPos, true)
     },
     // adds all the current locations to the map
     addCurrentPosition (layerId, [lon, lat], typeOfLayer, walkId, isVisible) { // typeOfLayer = position, label, user
@@ -131,8 +134,13 @@ export default {
       this.mapHelper.createLabel(createdLayer, lon, lat)
       this.$store.map = this.mapHelper
     }
-  }
+    // addUserPosition ([lon, lat], isVisible) { // typeOfLayer = position, label, user
+    //   const createdLayer = this.mapHelper.addUserLayer(lon, lat, isVisible)
+    //   this.mapHelper.addPosition(createdLayer, 'User')
+    //   this.mapHelper.createLabel(createdLayer, lon, lat)
+    // }
 
+  }
 }
 
 </script>

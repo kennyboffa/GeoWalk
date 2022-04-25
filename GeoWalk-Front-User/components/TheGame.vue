@@ -6,17 +6,21 @@
       max-width="600px"
     >
       <ContentDialog
+        v-if="locationContent"
+        :quit-pressed="quitPressed"
+        :visited-locations="visitedLocations"
         :location-content="locationContent"
         @dialog-close="[contentDialog = false, locationDone = true, showNext = true ]"
       />
     </v-dialog>
     <v-btn
-      v-if="notPlaying"
+      v-if="!gameInProgress"
       class="success"
-      @click="runGame()"
+      @click="[visitedLocations = [], runGame()]"
     >
       Start the Game
     </v-btn>
+
     <v-btn
       v-if="gameInProgress"
       class="red"
@@ -25,7 +29,7 @@
       Quit
     </v-btn>
     <v-btn
-      v-if="showNext"
+      v-if="showNext && gameInProgress"
       class="success"
       @click="runGame()"
     >
@@ -56,13 +60,14 @@ export default {
     MapContainerUser
   },
   props: {
-    selectedWalkId: { type: Number, default: null }
+    selectedWalkId: { type: String, default: null }
   },
 
   data () {
     return {
+      walkId: parseInt(this.selectedWalkId),
       currentLocation: undefined,
-      locations: this.locations,
+      locations: [],
       contentDialog: false,
       locationContent: undefined,
       zoom: 17,
@@ -76,23 +81,18 @@ export default {
       locationDone: false,
       showNext: false,
       visitedLocations: []
-      // this.$refs.mapContainer.mapHelper.map.values_.layergroup.values_.layers.array_
-      // mapPoints: this.$store.map.map.values_.layergroup.values_.layers.array_
     }
   },
   created () {
     this.GetWalk()
-    // console.log(this.mapPoints)
-    // console.log(this.$store.map)
   },
   methods: {
     GetWalk () {
       this.$axios
-        .get(`/walk/${this.selectedWalkId}`)
+        .get(`/walk/${this.walkId}`)
         .then((res) => {
           this.walk = res.data
           this.locations = res.data.locations.map(x => ({ ...x, visible: false }))
-          // this.$emit('walkId')
         })
     },
     goBack () {
@@ -100,53 +100,49 @@ export default {
     },
     runGame () {
       this.gameInProgress = true
-      this.notPlaying = false
 
       this.showNextLocation()
     },
 
     showNextLocation () {
-      // show user dot and start tracking
+      // add logic to show user dot and start tracking
 
       if (this.locations.length > 0) {
         // adds the first location in the array to the visited ones
+        this.quitPressed = false
         this.locationContent = this.locations[0]
+        console.log(this.locationContent)
+        this.visitedLocations.push(this.locations[0])
         this.locations[0].visible = true
         this.$refs.mapContainerGame.renderChart()
+        this.locations.shift(0) // removes the Location
 
         setTimeout(() => {
           this.closeToPoint = true
           if (this.closeToPoint) {
             this.locationDone = false// - if user is close enough to location open dialog
 
-            this.locationDone = this.showContentDialog(this.locations[0])
-            this.visitedLocations.push(this.locations[0])
-            this.locations.shift(0) // removes the location
+            this.showContentDialog()
           }
-        }, 2000)
+        }, 500)
+
         // logic to show content and if the location is completed, conditional etc to set the below
-      } else if (this.locationDone) {
+      } else if (this.locationDone && this.locations.length === 0) {
         this.showNext = false
         this.gameInProgress = false
+        this.locationContent = {}
         console.log('no more locations')
         this.quitGame()
       }
     },
     showContentDialog () {
-      // show content, wait for the right answer
-      this.$nuxt.$emit('getContent')
       this.contentDialog = true
-      console.log('done')
-      if (this.locationDone) {
-        return true
-      }
     },
 
     quitGame () {
       this.quitPressed = true
       this.gameInProgress = false
-      this.notPlaying = true
-      this.visitedLocations = []
+      this.contentDialog = true
       this.GetWalk()
       console.log('quit')
     }

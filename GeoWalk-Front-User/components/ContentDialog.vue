@@ -11,27 +11,32 @@
             sm="12"
             md="12"
           >
-            <div
-              v-for="(item,index) in baseContent"
-              :key="index"
-            >
-              {{ item.title }}
-
-              <v-card-text>{{ item.summarize }} {{ totalScore }}</v-card-text>
+            <v-card-text v-if="gameFinished || quitPressed">
+              Your score: {{ totalScore }} Number of locations visited: {{ visitedLocations.length }}
+            </v-card-text>
+            <div v-if="!quitPressed && !gameFinished">
               <div
-                v-for="(i, ind) in answers"
-                :key="ind"
+                v-for="(item,index) in baseContent"
+                :key="index"
               >
-                <v-radio-group
-                  v-if="item.type = 'questionanswer'"
-                  v-model="points"
+                {{ item.title }}
+
+                <v-card-text>{{ item.summarize }}</v-card-text>
+                <div
+                  v-for="(i, ind) in answers"
+                  :key="ind"
                 >
-                  <v-radio
-                    :label="`${i.answerText}`"
-                    :value="i.points"
-                  />
-                  <div>{{ i.points }}</div>
-                </v-radio-group>
+                  <v-radio-group
+                    v-if="item.type === 'questionanswer'"
+                    v-model="points"
+                  >
+                    <v-radio
+                      :label="`${i.answerText}`"
+                      :value="i.points"
+                    />
+                    <div>{{ i.points }}</div>
+                  </v-radio-group>
+                </div>
               </div>
             </div>
           </v-col>
@@ -41,6 +46,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
+        v-if="typeOfContent === 'questionanswer' && !gameFinished"
         color="green darken-1"
         text
         @click="[$emit('dialog-close'), addPoints(points)]"
@@ -48,11 +54,20 @@
         Submit
       </v-btn>
       <v-btn
+        v-if="typeOfContent === 'info' && !gameFinished"
         color="blue darken-1"
         text
         @click="$emit('dialog-close')"
       >
         Close
+      </v-btn>
+      <v-btn
+        v-if="gameFinished"
+        color="blue darken-1"
+        text
+        @click="$emit('dialog-close'), totalScore = 0"
+      >
+        Finish
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -62,10 +77,13 @@
 export default {
   props: {
     locationContent: { type: Object, default: null },
-    activate: { type: Boolean, default: false }
+    quitPressed: { type: Boolean, default: false },
+    visitedLocations: { type: Array, default: undefined }
   },
   data () {
     return {
+      gameFinished: false,
+      typeOfContent: undefined,
       radioGroup: 1,
       totalScore: null,
       points: null,
@@ -73,39 +91,46 @@ export default {
       content: [],
       title: undefined,
       radioSelected: undefined,
-      info: '',
-      question: '',
-      type: 'info',
       answers: [{
 
       }]
     }
   },
+  watch: {
+
+    locationContent (old, value) {
+      this.gameFinished = false
+      if (this.locationContent.id !== undefined) {
+        this.GetLocationContent()
+      } else {
+        console.log('asd')
+        this.gameFinished = true
+      }
+    }
+  },
   mounted () {
-    this.$nuxt.$on('getContent', () => {
-      this.GetLocationContent()
-    })
+    this.GetLocationContent()
   },
   methods: {
-    GetLocationContent () {
-      this.$axios
+    async GetLocationContent () {
+      await this.$axios
         .get(`/location/${this.locationContent.id}`)
         .then((res) => {
-          console.log(this.baseContent)
           this.baseContent = res.data.contents
           this.GetContent(this.baseContent[0].id)
           this.GetAnswers(this.baseContent[0].id)
+          this.typeOfContent = this.baseContent[0].type
         })
     },
-    GetAnswers (id) {
-      this.$axios
+    async GetAnswers (id) {
+      await this.$axios
         .get(`/content/${id}/questionanswer`)
         .then((res) => {
           this.answers = res.data
         })
     },
-    GetContent (id) {
-      this.$axios
+    async GetContent (id) {
+      await this.$axios
         .get(`/content/${id}`)
         .then((res) => {
           this.content = res.data
