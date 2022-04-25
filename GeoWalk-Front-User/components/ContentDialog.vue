@@ -88,7 +88,7 @@ export default {
       totalScore: null,
       points: null,
       baseContent: [],
-      content: [],
+      content: {},
       title: undefined,
       radioSelected: undefined,
       answers: [{
@@ -116,7 +116,6 @@ export default {
       await this.$axios
         .get(`/location/${this.locationContent.id}`)
         .then((res) => {
-          this.baseContent = res.data.contents
           this.GetContent(this.baseContent[0].id)
           this.GetAnswers(this.baseContent[0].id)
           this.typeOfContent = this.baseContent[0].type
