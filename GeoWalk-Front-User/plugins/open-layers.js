@@ -67,13 +67,13 @@ export default (context, inject) => {
 
     return {
       map,
-      addLayer: (layerId, typeOfLayer, setWalkId, x, y, isVisible = false) => {
+      addLayer: (layerId, typeOfLayer, setWalkId, x, y, isVisible) => {
         const feature = new ol.format.GeoJSON().readFeature(
 
           {
             type: 'Feature',
             properties: { layerId, typeOfLayer, setWalkId, isVisible },
-            style: styleFunction,
+            // style: styleFunction,
             geometry: {
               type: 'MultiPoint',
               coordinates:
@@ -88,7 +88,6 @@ export default (context, inject) => {
           type: typeOfLayer,
           visible: isVisible, // hides/shows the layer from the user
           walkId: setWalkId,
-
           style: styleFunction,
           source: new ol.source.VectorSource({
             features: [feature]

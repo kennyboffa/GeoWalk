@@ -93,6 +93,7 @@ export default {
         .then((res) => {
           this.walk = res.data
           this.locations = res.data.locations.map(x => ({ ...x, visible: false }))
+          // this.$refs.mapContainerGame.renderChart(true)
         })
     },
     goBack () {

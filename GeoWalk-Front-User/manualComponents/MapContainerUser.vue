@@ -38,7 +38,7 @@ export default {
       ],
       centerView: [],
       userPosition: undefined,
-      userPos: undefined,
+      userPos: [],
       contentLocationId: null,
       showLayers: [],
       aLayer: '',
@@ -72,9 +72,20 @@ export default {
         this.renderChart() // necessary to allow the fetch to finish on locations before reading lat and lon
       }, 600)
     },
+    renderChart (calledFromGame) {
+      // if (calledFromGame === true) {
+      //   console.log(calledFromGame)
+      //   this.locations.forEach((location) => { // makes the locations not visible
+      //     location.visible = false
+      //   })
+      // } else {
+      //   this.locations.forEach((location) => { // makes the locations visible
+      //     location.visible = true
+      //   })
+      // }
 
-    renderChart () {
       this.$refs.map.innerHTML = ''
+      // this.locations.map(x => ({ ...x, visible: true }))
       if (this.userPosition) {
         this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
           this.userPosition.lat])
@@ -125,20 +136,20 @@ export default {
 
         this.addCurrentPosition(`${location.id}`, lonLat, this.typeOfLayer, walkId, this.isVisible)
       }
-      // this.addUserPosition(this.userPos, true)
+      this.addUserPosition(null, this.userPos, 'userlayer', null, true)
+      this.$store.map = this.mapHelper
     },
     // adds all the current locations to the map
     addCurrentPosition (layerId, [lon, lat], typeOfLayer, walkId, isVisible) { // typeOfLayer = position, label, user
       const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, walkId, lon, lat, isVisible)
       this.mapHelper.addPosition(createdLayer, this.title)
       this.mapHelper.createLabel(createdLayer, lon, lat)
-      this.$store.map = this.mapHelper
+    },
+    addUserPosition (layerId, [lon, lat], typeOfLayer, walkId, isVisible) {
+      const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, walkId, lon, lat, isVisible)
+      this.mapHelper.addPosition(createdLayer, 'User')
+      this.mapHelper.createLabel(createdLayer, lon, lat)
     }
-    // addUserPosition ([lon, lat], isVisible) { // typeOfLayer = position, label, user
-    //   const createdLayer = this.mapHelper.addUserLayer(lon, lat, isVisible)
-    //   this.mapHelper.addPosition(createdLayer, 'User')
-    //   this.mapHelper.createLabel(createdLayer, lon, lat)
-    // }
 
   }
 }

@@ -18,7 +18,7 @@
             type="button"
             @click="fetchAddress()"
           >
-            {{ loading ? 'Loading ...' : 'Autofill my address' }}
+            {{ loading ? 'Loading ...' : 'Find My Location' }}
           </v-btn>
           <br><br><br><div>OR enter address manually below</div><br>
           <div

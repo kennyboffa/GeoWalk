@@ -78,7 +78,7 @@ export default {
           this.walks.forEach((element) => {
             this.locations.push({
               ...element.locations[0],
-              visible: false
+              visible: true
             })
             // this.setWalk.push(element.id)
             // console.log(element.id)
