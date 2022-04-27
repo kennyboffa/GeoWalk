@@ -1,7 +1,8 @@
 <template>
   <v-card>
     <v-card-title>
-      <span class="text-h5">Location Content</span>
+      <span v-if="!gameFinished" class="text-h5">Location Content</span>
+      <span v-if="gameFinished" class="text-h5">Walk Finished!</span>
     </v-card-title>
     <v-card-text>
       <v-container fluid>

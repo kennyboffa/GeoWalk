@@ -1,5 +1,6 @@
 export const state = () => ({
-  map: undefined
+  map: undefined,
+  user: undefined
 })
 export const mutations = {
   set_map (state, value) {

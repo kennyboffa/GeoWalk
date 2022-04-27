@@ -23,6 +23,7 @@
 export default {
   name: 'Map',
   props: {
+    user: { type: Array, default: undefined },
     locationRemoved: { type: Number, default: null },
     locations: { type: Array, default: () => [] },
     setZoom: { type: Number, default: null },
@@ -38,7 +39,6 @@ export default {
       ],
       centerView: [],
       userPosition: undefined,
-      userPos: [],
       contentLocationId: null,
       showLayers: [],
       aLayer: '',
@@ -53,7 +53,12 @@ export default {
       ]
     }
   },
+  // watch: {
 
+  //   userPosition (old, value) {
+  //     console.log(old, value)
+  //   }
+  // },
   mounted () {
     this.activate()
     this.$nuxt.$on('updateCenterView', () => {
@@ -72,24 +77,15 @@ export default {
         this.renderChart() // necessary to allow the fetch to finish on locations before reading lat and lon
       }, 600)
     },
-    renderChart (calledFromGame) {
-      // if (calledFromGame === true) {
-      //   console.log(calledFromGame)
-      //   this.locations.forEach((location) => { // makes the locations not visible
-      //     location.visible = false
-      //   })
-      // } else {
-      //   this.locations.forEach((location) => { // makes the locations visible
-      //     location.visible = true
-      //   })
-      // }
-
+    renderChart () {
       this.$refs.map.innerHTML = ''
       // this.locations.map(x => ({ ...x, visible: true }))
       if (this.userPosition) {
         this.centerView = this.$ol.format.fromLonLat([this.userPosition.lon,
           this.userPosition.lat])
-        this.userPos = this.centerView
+
+        this.$store.user = this.$ol.format.fromLonLat([this.userPosition.lon,
+          this.userPosition.lat])
       } else if (this.$ol.format.fromLonLat(this.locations && this.locations.length > 0)) {
         this.centerView = this.$ol.format.fromLonLat([(this.locations[0].longitude),
           (this.locations[0].latitude)])
@@ -136,7 +132,7 @@ export default {
 
         this.addCurrentPosition(`${location.id}`, lonLat, this.typeOfLayer, walkId, this.isVisible)
       }
-      this.addUserPosition(null, this.userPos, 'userlayer', null, true)
+      this.addUserPosition(null, this.$store.user, 'userlayer', null, true)
       this.$store.map = this.mapHelper
     },
     // adds all the current locations to the map

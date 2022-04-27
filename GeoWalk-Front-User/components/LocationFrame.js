@@ -6,13 +6,20 @@ export default {
       address: {},
       error: null,
       geolocationSupported: undefined,
-      loading: false
+      loading: false,
+      noReCenter: false
+
     }
   },
   mounted () {
     this.geolocationSupported = 'geolocation' in window.navigator
+    this.$nuxt.$on('gameRunning', () => {
+      this.fetchAddress()
+      this.noReCenter = true
+    })
   },
   methods: {
+
     async fetchAddress (manualLocation) {
       if (!manualLocation) {
         try {
@@ -29,9 +36,11 @@ export default {
         this.loading = false
         console.log('manual')
       }
+
       this.$cookiz.set('userPosition', this.address, { maxAge: 60 * 60 })
-      console.log(this.address)
-      this.$nuxt.$emit('updateCenterView')
+      if (!this.noReCenter) {
+        this.$nuxt.$emit('updateCenterView')
+      }
     },
     setErrorState () { // lägg till error
       this.error = null

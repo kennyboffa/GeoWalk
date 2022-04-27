@@ -43,6 +43,7 @@
         <MapContainerUser
           ref="mapContainerGame"
           :locations="locations"
+          :user="user"
           :set-zoom="zoom"
         />
       </ClientOnly>
@@ -65,6 +66,8 @@ export default {
 
   data () {
     return {
+      localTime: undefined,
+      user: this.$store.user,
       walkId: parseInt(this.selectedWalkId),
       currentLocation: undefined,
       locations: [],
@@ -83,10 +86,26 @@ export default {
       visitedLocations: []
     }
   },
+
   created () {
     this.GetWalk()
   },
   methods: {
+    updateUserPosition () {
+      setInterval(function () {
+        if (this.gameInProgress) {
+          this.$nuxt.$emit('gameRunning')
+          console.log('running')
+        }
+      }, 2500)
+    },
+    // setTimeout(() => {
+    //   while (this.gameInProgress) {
+    //     this.$nuxt.$emit('gameRunning')
+    //     console.log('running')
+    //   }
+    // }, 2500)
+
     GetWalk () {
       this.$axios
         .get(`/walk/${this.walkId}`)
@@ -101,7 +120,7 @@ export default {
     },
     runGame () {
       this.gameInProgress = true
-
+      this.updateUserPosition()
       this.showNextLocation()
     },
 
