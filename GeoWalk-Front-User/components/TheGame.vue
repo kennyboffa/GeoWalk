@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     updateUserPosition () {
-      setInterval(function () {
+      setInterval(() => {
         if (this.gameInProgress) {
           this.$nuxt.$emit('gameRunning')
           console.log('running')

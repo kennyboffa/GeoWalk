@@ -69,7 +69,7 @@ export default (context, inject) => {
       map,
       addLayer: (layerId, typeOfLayer, setWalkId, x, y, isVisible) => {
         const feature = new ol.format.GeoJSON().readFeature(
-
+          // Figure out how to style layer if userlayer
           {
             type: 'Feature',
             properties: { layerId, typeOfLayer, setWalkId, isVisible },

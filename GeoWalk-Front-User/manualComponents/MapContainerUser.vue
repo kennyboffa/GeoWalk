@@ -75,7 +75,7 @@ export default {
     activate () {
       setTimeout(() => {
         this.renderChart() // necessary to allow the fetch to finish on locations before reading lat and lon
-      }, 600)
+      }, 1600)
     },
     renderChart () {
       this.$refs.map.innerHTML = ''
@@ -132,7 +132,7 @@ export default {
 
         this.addCurrentPosition(`${location.id}`, lonLat, this.typeOfLayer, walkId, this.isVisible)
       }
-      this.addUserPosition(null, this.$store.user, 'userlayer', null, true)
+      this.addUserPosition(null, [this.$store.user], 'userlayer', null, true)
       this.$store.map = this.mapHelper
     },
     // adds all the current locations to the map
