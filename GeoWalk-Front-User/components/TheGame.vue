@@ -66,8 +66,10 @@ export default {
 
   data () {
     return {
+      intervalId: undefined,
+      metresToPoint: undefined,
       localTime: undefined,
-      user: this.$store.user,
+      user: this.$store.userLonLat,
       walkId: parseInt(this.selectedWalkId),
       currentLocation: undefined,
       locations: [],
@@ -92,19 +94,16 @@ export default {
   },
   methods: {
     updateUserPosition () {
-      setInterval(() => {
-        if (this.gameInProgress) {
-          this.$nuxt.$emit('gameRunning')
-          console.log('running')
-        }
-      }, 2500)
+      this.intervalId = setInterval(() => {
+        this.$nuxt.$emit('gameRunning')
+        console.log('running')
+        this.metresToPoint = this.userToLocationInMetres()
+        console.log(this.metresToPoint)
+        if (this.metresToPoint < 40) {
+          this.closeToPoint = true
+        } else { this.closeToPoint = false }
+      }, 2000)
     },
-    // setTimeout(() => {
-    //   while (this.gameInProgress) {
-    //     this.$nuxt.$emit('gameRunning')
-    //     console.log('running')
-    //   }
-    // }, 2500)
 
     GetWalk () {
       this.$axios
@@ -120,10 +119,23 @@ export default {
     },
     runGame () {
       this.gameInProgress = true
-      this.updateUserPosition()
+      if (this.gameInProgress && !this.closeToPoint) {
+        this.updateUserPosition()
+      }
       this.showNextLocation()
     },
 
+    userToLocationInMetres () { // generally used geo measurement function
+      const R = 6378.137 // Radius of earth in KM
+      const dLat = this.user[1] * Math.PI / 180 - this.locationContent.latitude * Math.PI / 180
+      const dLon = this.user[0] * Math.PI / 180 - this.locationContent.longitude * Math.PI / 180
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(this.user[1] * Math.PI / 180) * Math.cos(this.locationContent.latitude * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2)
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+      const d = R * c
+      return d * 1000 // meters
+    },
     showNextLocation () {
       // add logic to show user dot and start tracking
 
@@ -136,12 +148,13 @@ export default {
         this.locations[0].visible = true
         this.$refs.mapContainerGame.renderChart()
         this.locations.shift(0) // removes the Location
+        console.log(this.user)
 
         setTimeout(() => {
-          this.closeToPoint = true
+          this.closeToPoint = true // ACHTUNG!! REMOVE when userpositions updates properly, only for testing!!
           if (this.closeToPoint) {
             this.locationDone = false// - if user is close enough to location open dialog
-
+            clearInterval(this.intervalId)
             this.showContentDialog()
           }
         }, 500)
@@ -152,9 +165,30 @@ export default {
         this.gameInProgress = false
         this.locationContent = {}
         console.log('no more locations')
+        clearInterval(this.intervalId)
         this.quitGame()
       }
-    },
+    }, // logic below more adjusted to the real game
+    // runGame () {
+    //   this.gameInProgress = true
+    //   if (this.gameInProgress && !this.closeToPoint) {
+    //     this.updateUserPosition()
+    //   } else if (this.closeToPoint) {
+    //     setTimeout(() => {
+    //       this.locationDone = false// - if user is close enough to location open dialog
+
+    //       this.showContentDialog()
+    //     }, 500)
+
+    //     // logic to show content and if the location is completed, conditional etc to set the below
+    //   } else if (this.locationDone && this.locations.length === 0) {
+    //     this.showNext = false
+    //     this.gameInProgress = false
+    //     this.locationContent = {}
+    //     console.log('no more locations')
+    //     this.quitGame()
+    //   } else { this.showNextLocation() }
+    // },
     showContentDialog () {
       this.contentDialog = true
     },

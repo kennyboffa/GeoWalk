@@ -10,6 +10,8 @@ import { fromLonLat, toLonLat } from 'ol/proj'
 import { Circle } from 'ol/geom'
 import Feature from 'ol/Feature'
 import { Circle as CircleStyle, Fill, Stroke, Style } from 'ol/style'
+import LineString from 'ol/geom/LineString'
+import { getLength } from 'ol/sphere'
 
 export default (context, inject) => {
   const ol = {
@@ -27,7 +29,9 @@ export default (context, inject) => {
     format: {
       GeoJSON,
       fromLonLat,
-      toLonLat
+      toLonLat,
+      getLength,
+      LineString
     }
   }
   // const zoomValue = null
@@ -59,7 +63,7 @@ export default (context, inject) => {
     options = {
       view: new ol.View({
         center: options.centerView ?? ol.format.fromLonLat([16, 15]),
-        zoom: options.zoom ?? 10
+        zoom: options.zoom ?? 6
       }),
       ...options
     }
