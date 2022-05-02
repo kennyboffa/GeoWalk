@@ -37,6 +37,7 @@ export default {
 
         }
       ],
+      optionalZoom: undefined,
       centerView: [],
       userPosition: undefined,
       contentLocationId: null,
@@ -69,13 +70,20 @@ export default {
     reCenter () {
       // if (this.$refs.map) { this.$refs.map.innerHTML = '' }
       this.userPosition = this.$cookiz.get('userPosition')
-      this.$cookiz.remove('userPosition')
+      console.log(this.$cookiz.get('userPosition'))
+      // this.$cookiz.remove('userPosition')
+      this.$cookiz.set('userPosition', undefined, { maxAge: 0 })
+      console.log(this.$cookiz.get('userPosition'))
       this.renderChart()
     },
     activate () {
-      setTimeout(() => {
+      if (this.locations.length > 0) {
         this.renderChart() // necessary to allow the fetch to finish on locations before reading lat and lon
-      }, 600)
+      } else {
+        setTimeout(() => {
+          this.renderChart() // necessary to allow the fetch to finish on locations before reading lat and lon
+        }, 1500)
+      }
     },
     renderChart () {
       this.$refs.map.innerHTML = ''
@@ -86,17 +94,20 @@ export default {
 
         this.$store.user = this.$ol.format.fromLonLat([this.userPosition.lon,
           this.userPosition.lat])
-      } else if (this.$ol.format.fromLonLat(this.locations && this.locations.length > 0)) {
+        this.$store.userLonLat = [this.userPosition.lon, this.userPosition.lat]
+      } else if (this.locations && this.locations.length > 0) {
+        this.$ol.format.fromLonLat(this.locations && this.locations.length)
         this.centerView = this.$ol.format.fromLonLat([(this.locations[0].longitude),
           (this.locations[0].latitude)])
       } else {
-        this.centerView = this.$ol.format.fromLonLat([12, 54])
+        this.centerView = this.$ol.format.fromLonLat([14, 56])
+        this.optionalZoom = 7
       }
       const centerView = this.centerView
 
       const options = {
         target: this.$refs.map,
-        zoom: this.setZoom,
+        zoom: this.optionalZoom ?? this.setZoom,
         centerView,
         layers: [
           // adding a background tiled layer
@@ -145,6 +156,7 @@ export default {
       const createdLayer = this.mapHelper.addLayer(layerId, typeOfLayer, walkId, lon, lat, isVisible)
       this.mapHelper.addPosition(createdLayer, 'User')
       this.mapHelper.createLabel(createdLayer, lon, lat)
+      console.log(createdLayer)
     }
 
   }

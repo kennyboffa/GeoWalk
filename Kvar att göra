@@ -1,0 +1,43 @@
+Kunde inte testa under slutet av dagen, då nominatim.openstreetmap slutade ta empot mina requests, sidan låg inte nere, så troligtvis tycker de jag 
+gjort för många requests under för kort tid. :P 
+
+Lite Trello kort kvar att göra https://trello.com/b/T4oJVFl4/praktik-tipzgo
+
+Hursomhelst, kvar att göra bortsett från det som finns på Trello:
+
+STORT
+
+- "User" punkten ändrar inte läge på kartan när man rör sig under spelets gång. Kan bero på att min laptop har för okänslig geolocation eller så, men troligtvis 
+fel i min kod. Har lagt till kod som jag TROR borde funka, men som sagt, har nog missat nått. Testade även att läsa in ny karta varannan sekund, 
+men inte heller då ändrades punktens läge.
+Försökte få igång så jag kunde testa på telefonen med "ngrok", och det funkade såtillvida att jag kunde så min client side, men det fanns inga walks t.ex. alltså 
+fick jag av någon anledning inte api/databas/server delen att visa sig på telefonen, så kunde inte testa. Fick ta promenader med min laptop. Testade hela vägen till kvantum, men
+punkten flyttade sig aldrig. 
+
+- Lyckades aldrig byta färg på user punkten, försökte på olika sätt, dels stylea den när man skapar den, alternativt stylea den i efterhand under körning, men fick 
+aldrig ordning på det. Troligtvis har jag tänkt lite fel när jag skapat mina "layers" och borde skapat på ett annat sätt så jag kunde dela upp det bättre mellan "typeOfLayer" 
+men tänkte att jag kunde just använda den propertyn för att identifiera de olika lagren. Men fick som sagt inte ordning på det. 
+
+- Får error då och då när kartan ska läsas in och visa alla walks (/setUserLocation), misstänker att det beror på att clientsidan inte hinner läsa in från 
+databasen, men har testat med setTimeOut, lite if satser etc, men fortfarande problem.
+
+- Backar man från spelsidan så har jag missat nån logik, så jag ofta får error och måste läsa in sidan igen. Kan ha med "userposition" att göra.
+
+- Samma som ovan om man trycker på "Find my location" när man backat. Blir 90 % av gångerna error.
+
+- har lagt in logik för att visa dialog etc när man kommer inom 40 m från nästa punkt, men har inte kunnat testa om det funkar tyvärr. Men kan se att 
+uträkningen iallafall stämmer på avståndet till de olika punkterna. 
+
+- Har inte skapat logik för att skapa användare.
+
+- Har inte skapat nån logik för att spara scores eller användare. Man ser sin score när man är klar, men den sparas inte. 
+
+- Ingen logik inlagd för att visa bilder i contentDialog, men borde väl inte vara så svårt. 
+
+SMÅTT:
+
+- Lägga in logga, "header" och "footer" med lite länkar, typ "about" och kanske "contact". 
+
+- Småfix, snygga till rent allmänt, göra förstasidan snyggare.
+
+- ta bort dark mode som default? 
