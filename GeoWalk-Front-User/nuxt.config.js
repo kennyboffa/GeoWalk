@@ -49,7 +49,7 @@ export default {
   ],
 
   axios: {
-    baseURL: 'http://localhost:3001/' // ändra till https och 3000
+    baseURL: 'https://localhost:3000/' // ändra till https och 3000
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
